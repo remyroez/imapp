@@ -1,3 +1,6 @@
 [submodule "examples/thirdparty/imgui"]
 	path = examples/thirdparty/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "examples/thirdparty/sdl2-cmake-modules"]
+	path = examples/thirdparty/sdl2-cmake-modules
+	url = https://github.com/aminosbh/sdl2-cmake-modules.git
