@@ -56,9 +56,13 @@ if(IMGUI_APP_RENDERER_OPENGL) # OpenGL
   endif()
 elseif(IMGUI_APP_RENDERER_VULKAN) # Vulkan
   find_package(Vulkan REQUIRED)
-  include_directories(${VULKAN_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} ${VULKAN_LIBRARIES})
+  include_directories(${Vulkan_INCLUDE_DIRS})
+  target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
   target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_EXAMPLE_DIR}/imgui_impl_vulkan.cpp)
+
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DIMGUI_VULKAN_DEBUG_REPORT)
+  endif()
 endif()
 
 # OpenGL Loaders
