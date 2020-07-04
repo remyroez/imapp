@@ -13,19 +13,10 @@ include(cmake/imgui.cmake)
 target_link_libraries(${PROJECT_NAME} ${IMGUI_LIBRARIES})
 
 # Platform Bindings
-set(IMGUI_APP_PLATFORM "SDL2" CACHE STRING "Platform Binding")
-set(IMGUI_APP_PLATFORM_SDL2 OFF)
-
-if(IMGUI_APP_PLATFORM STREQUAL "SDL2")
-  set(IMGUI_APP_PLATFORM_SDL2 ON)
-endif()
-
-if(IMGUI_APP_PLATFORM_SDL2) # SDL2
-  find_package(SDL2 REQUIRED)
-  include_directories(${SDL2_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
-  target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_EXAMPLE_DIR}/imgui_impl_sdl.cpp)
-endif()
+include(cmake/imgui_app_platform.cmake)
+target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_APP_PLATFORM_INCLIUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${IMGUI_APP_PLATFORM_LIBRARIES})
+target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_APP_PLATFORM_SOURCES})
 
 # Renderer Bindings
 set(IMGUI_APP_RENDERER "OpenGL3" CACHE STRING "Renderer Binding")
