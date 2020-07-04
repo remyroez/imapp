@@ -1,4 +1,5 @@
 
+# Platform Bindings
 set(IMGUI_APP_PLATFORM "SDL2" CACHE STRING "Platform Binding")
 set(IMGUI_APP_PLATFORM_SDL2 OFF)
 
