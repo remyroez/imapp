@@ -1,5 +1,11 @@
 
+set(IMGUI_APP_RENDERER_INCLUDE_DIR ${IMGUI_EXAMPLE_DIR})
+
 # Renderer Bindings
+add_library(imgui_app_renderer STATIC)
+target_link_libraries(imgui_app_renderer ${IMGUI_LIBRARIES})
+target_include_directories(imgui_app_renderer PUBLIC ${IMGUI_APP_RENDERER_INCLUDE_DIR})
+
 set(IMGUI_APP_RENDERER "OpenGL3" CACHE STRING "Renderer Binding")
 set(IMGUI_APP_RENDERER_OPENGL OFF)
 set(IMGUI_APP_RENDERER_OPENGL2 OFF)
@@ -18,20 +24,20 @@ endif()
 
 if(IMGUI_APP_RENDERER_OPENGL) # OpenGL
   find_package(OpenGL REQUIRED)
-  set(IMGUI_APP_RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
-  set(IMGUI_APP_RENDERER_INCLIUDE_DIRS ${OPENGL_INCLUDE_DIRS})
+  target_link_libraries(imgui_app_renderer ${OPENGL_LIBRARIES})
+  target_include_directories(imgui_app_renderer PUBLIC ${OPENGL_INCLUDE_DIRS})
 
   if(IMGUI_APP_RENDERER_OPENGL2)
-    set(IMGUI_APP_RENDERER_SOURCES ${IMGUI_EXAMPLE_DIR}/imgui_impl_opengl2.cpp)
+    target_sources(imgui_app_renderer PRIVATE ${IMGUI_APP_RENDERER_INCLUDE_DIR}/imgui_impl_opengl2.cpp)
   elseif(IMGUI_APP_RENDERER_OPENGL3)
-    set(IMGUI_APP_RENDERER_SOURCES ${IMGUI_EXAMPLE_DIR}/imgui_impl_opengl3.cpp)
+    target_sources(imgui_app_renderer PRIVATE ${IMGUI_APP_RENDERER_INCLUDE_DIR}/imgui_impl_opengl3.cpp)
   endif()
 
 elseif(IMGUI_APP_RENDERER_VULKAN) # Vulkan
   find_package(Vulkan REQUIRED)
-  set(IMGUI_APP_RENDERER_LIBRARIES ${Vulkan_LIBRARIES})
-  set(IMGUI_APP_RENDERER_INCLIUDE_DIRS ${Vulkan_INCLUDE_DIRS})
-  set(IMGUI_APP_RENDERER_SOURCES ${IMGUI_EXAMPLE_DIR}/imgui_impl_vulkan.cpp)
+  target_link_libraries(imgui_app_renderer ${Vulkan_LIBRARIES})
+  target_include_directories(imgui_app_renderer PUBLIC ${Vulkan_INCLUDE_DIRS})
+  target_sources(imgui_app_renderer PRIVATE ${IMGUI_APP_RENDERER_INCLUDE_DIR}/imgui_impl_vulkan.cpp)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-DIMGUI_VULKAN_DEBUG_REPORT)
@@ -54,9 +60,11 @@ endif()
 if(IMGUI_APP_OPENGL_LOADER_GLEW)
   find_package(GLEW REQUIRED)
   add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
-  list(APPEND IMGUI_APP_RENDERER_LIBRARIES ${GLEW_LIBRARIES})
+  target_link_libraries(imgui_app_renderer ${GLEW_LIBRARIES})
 
 elseif(IMGUI_APP_OPENGL_LOADER_GLAD)
   add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
-  list(APPEND IMGUI_APP_RENDERER_LIBRARIES ${GLAD_LIBRARIES})
+  target_link_libraries(imgui_app_renderer ${GLAD_LIBRARIES})
 endif()
+
+set(IMGUI_APP_RENDERER_LIBRARIES imgui_app_renderer)

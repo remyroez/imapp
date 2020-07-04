@@ -15,14 +15,10 @@ target_link_libraries(${PROJECT_NAME} ${IMGUI_LIBRARIES})
 # Platform Bindings
 include(cmake/imgui_app_platform.cmake)
 target_link_libraries(${PROJECT_NAME} ${IMGUI_APP_PLATFORM_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_APP_PLATFORM_INCLIUDE_DIRS})
-target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_APP_PLATFORM_SOURCES})
 
 # Renderer Bindings
 include(cmake/imgui_app_renderer.cmake)
 target_link_libraries(${PROJECT_NAME} ${IMGUI_APP_RENDERER_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_APP_RENDERER_INCLIUDE_DIRS})
-target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_APP_RENDERER_SOURCES})
 
 # Example sources
 set(IMGUI_APP_EXAMPLE_SOURCES "")
