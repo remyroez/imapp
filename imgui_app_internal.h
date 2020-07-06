@@ -6,10 +6,6 @@
 
 namespace ImGuiApp
 {
-    // for Dear ImGui
-    IMGUI_APP_API bool SetupImGui();
-    IMGUI_APP_API void CleanupImGui();
-
     // for Platform
     IMGUI_APP_API bool SetupPlatform(const char* name);
     IMGUI_APP_API void ShutdownPlatform();

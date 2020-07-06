@@ -11,11 +11,6 @@ ImGuiContext *root_context = nullptr;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 bool done = false;
 
-}
-
-namespace ImGuiApp
-{
-
 bool SetupImGui()
 {
     // Setup Dear ImGui context
@@ -30,6 +25,11 @@ void CleanupImGui()
     ImGui::DestroyContext();
     root_context = nullptr;
 }
+
+}
+
+namespace ImGuiApp
+{
 
 bool BeginApplication(const char* name)
 {
