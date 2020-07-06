@@ -87,6 +87,50 @@ bool InitRenderer()
 bool done = false;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+bool ProcessEventPlatform()
+{
+    bool processed = false;
+
+    // Poll and handle events (inputs, window resize, etc.)
+    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+        processed = ImGui_ImplSDL2_ProcessEvent(&event);
+        if (!processed)
+        {
+            processed = true;
+            if (event.type == SDL_QUIT)
+            {
+                done = true;
+            }
+            else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+            {
+                done = true;
+            }
+            else
+            {
+                processed = false;
+            }
+        }
+    }
+
+    return processed;
+}
+
+void BeginFrameRenderer()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+}
+
+void BeginFramePlatform()
+{
+    ImGui_ImplSDL2_NewFrame(window);
+}
+
 void EndFrameRenderer(const ImVec4 &clear_col = ImVec4(0, 0, 0, 1.f))
 {
     auto &io = ImGui::GetIO();
@@ -132,17 +176,17 @@ bool BeginApplication(const char* name)
 {
     bool succeeded = false;
 
-    if (!SetupPlatform(name))
+    if (!SetupImGui())
+    {
+        //fprintf(stderr, "Failed to Setup Dear ImGui!\n");
+    }
+    else if (!SetupPlatform(name))
     {
         //printf("Error: %s\n", SDL_GetError());
     }
     else if (!ImGuiApp::InitOpenGLLoader())
     {
         //fprintf(stderr, "Failed to initialize OpenGL loader!\n");
-    }
-    else if (!SetupImGui())
-    {
-        //fprintf(stderr, "Failed to Setup Dear ImGui!\n");
     }
     else if (!InitPlatform())
     {
@@ -172,24 +216,18 @@ void EndApplication()
 
 bool BeginFrame()
 {
-    // Poll and handle events (inputs, window resize, etc.)
-    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+    if (ProcessEventPlatform())
     {
-        ImGui_ImplSDL2_ProcessEvent(&event);
-        if (event.type == SDL_QUIT)
-            done = true;
-        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-            done = true;
+        // processed
+    }
+    else
+    {
+        // TODO: User event process func
     }
 
     // Start the Dear ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(window);
+    BeginFrameRenderer();
+    BeginFramePlatform();
     ImGui::NewFrame();
 
     return !done;
