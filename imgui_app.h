@@ -14,4 +14,6 @@ namespace ImGuiApp
 
     IMGUI_APP_API bool BeginFrame();
     IMGUI_APP_API void EndFrame();
+
+    IMGUI_APP_API void SetClearColor(const ImVec4& col);
 }
