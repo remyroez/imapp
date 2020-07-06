@@ -47,8 +47,12 @@ bool SetupPlatform(const char* name)
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-        SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+        SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+
+        window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_OPENGL);
+
         window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+
         gl_context = SDL_GL_CreateContext(window);
         SDL_GL_MakeCurrent(window, gl_context);
         SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -63,16 +67,9 @@ bool SetupImGui()
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    auto *rootContext = ImGui::CreateContext();
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    return true;
+    return rootContext != nullptr;
 }
 
 bool InitPlatform()
