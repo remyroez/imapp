@@ -1,7 +1,7 @@
 // dear imgui app: standalone application starter kit
 
 #include "imgui_app.h"
-#include "imgui_internal.h"
+#include "imgui_app_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
@@ -22,7 +22,7 @@ void BeginFrameRenderer()
     ImGui_ImplOpenGL3_NewFrame();
 }
 
-void EndFrameRenderer(const ImVec4 &clear_col = ImVec4(0, 0, 0, 1.f))
+void EndFrameRenderer(const ImVec4 &clear_col)
 {
     auto &io = ImGui::GetIO();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
