@@ -9,6 +9,7 @@ namespace
 
 ImGuiContext *root_context = nullptr;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+bool done = false;
 
 }
 
@@ -77,7 +78,7 @@ bool BeginFrame()
     BeginFramePlatform();
     ImGui::NewFrame();
 
-    return !IsRequestedQuitPlatform();
+    return !done;
 }
 
 void EndFrame()
@@ -86,6 +87,21 @@ void EndFrame()
     ImGui::Render();
     EndFrameRenderer(clear_color);
     EndFramePlatform();
+}
+
+void RequestQuit()
+{
+    done = true;
+}
+
+void CancelQuit()
+{
+    done = false;
+}
+
+bool IsRequestedQuit()
+{
+    return done;
 }
 
 void SetClearColor(const ImVec4& col)

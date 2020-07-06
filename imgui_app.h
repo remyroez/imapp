@@ -15,5 +15,9 @@ namespace ImGuiApp
     IMGUI_APP_API bool BeginFrame();
     IMGUI_APP_API void EndFrame();
 
+    IMGUI_APP_API void RequestQuit();
+    IMGUI_APP_API void CancelQuit();
+    IMGUI_APP_API bool IsRequestedQuit();
+
     IMGUI_APP_API void SetClearColor(const ImVec4& col);
 }

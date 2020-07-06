@@ -16,8 +16,10 @@ namespace
 {
 
 SDL_Window* window = nullptr;
+
+#ifdef IMGUI_APP_RENDERER_OPENGL
 SDL_GLContext gl_context;
-bool done = false;
+#endif
 
 }
 
@@ -76,6 +78,18 @@ bool SetupPlatform(const char* name)
     return succeeded;
 }
 
+void ShutdownPlatform()
+{
+#ifdef IMGUI_APP_RENDERER_OPENGL
+    SDL_GL_DeleteContext(gl_context);
+#endif
+
+    SDL_DestroyWindow(window);
+    window = nullptr;
+    
+    SDL_Quit();
+}
+
 bool InitPlatform()
 {
     // Setup Platform bindings
@@ -84,6 +98,21 @@ bool InitPlatform()
 #elif defined(IMGUI_APP_RENDERER_VULKAN)
     return ImGui_ImplSDL2_InitForVulkan(window);
 #endif
+}
+
+void CleanupPlatform()
+{
+    ImGui_ImplSDL2_Shutdown();
+}
+
+void BeginFramePlatform()
+{
+    ImGui_ImplSDL2_NewFrame(window);
+}
+
+void EndFramePlatform()
+{
+    SDL_GL_SwapWindow(window);
 }
 
 bool ProcessEventPlatform()
@@ -104,11 +133,11 @@ bool ProcessEventPlatform()
             processed = true;
             if (event.type == SDL_QUIT)
             {
-                done = true;
+                RequestQuit();
             }
             else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
             {
-                done = true;
+                RequestQuit();
             }
             else
             {
@@ -118,38 +147,6 @@ bool ProcessEventPlatform()
     }
 
     return processed;
-}
-
-void BeginFramePlatform()
-{
-    ImGui_ImplSDL2_NewFrame(window);
-}
-
-void EndFramePlatform()
-{
-    SDL_GL_SwapWindow(window);
-}
-
-void CleanupPlatform()
-{
-    ImGui_ImplSDL2_Shutdown();
-}
-
-void ShutdownPlatform()
-{
-#ifdef IMGUI_APP_RENDERER_OPENGL
-    SDL_GL_DeleteContext(gl_context);
-#endif
-
-    SDL_DestroyWindow(window);
-    window = nullptr;
-    
-    SDL_Quit();
-}
-
-bool IsRequestedQuitPlatform()
-{
-    return done;
 }
 
 }
