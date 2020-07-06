@@ -13,6 +13,9 @@ target_link_libraries(imgui_app ${IMGUI_APP_PLATFORM_LIBRARIES})
 target_link_libraries(imgui_app ${IMGUI_APP_RENDERER_LIBRARIES})
 
 # Sources
-target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app.cpp)
+target_sources(imgui_app PRIVATE
+  ${IMGUI_APP_SOURCE_DIR}/imgui_app.cpp
+  ${IMGUI_APP_SOURCE_DIR}/imgui_app_opengl_loader.cpp
+)
 
 set(IMGUI_APP_LIBRARIES imgui_app)

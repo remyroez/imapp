@@ -6,39 +6,18 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+
+#include "imgui_app_opengl_loader.h"
+
 #include <stdio.h>
 #include <SDL.h>
 
-// About Desktop OpenGL function loaders:
-//  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
-//  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
-//  You may use another loader/header of your choice (glext, glLoadGen, etc.), or chose to manually implement your own.
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-#include <GL/gl3w.h>            // Initialize with gl3wInit()
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-#include <GL/glew.h>            // Initialize with glewInit()
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-#include <glad/glad.h>          // Initialize with gladLoadGL()
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
-#define GLFW_INCLUDE_NONE       // GLFW including OpenGL headers causes ambiguity or multiple definition errors.
-#include <glbinding/Binding.h>  // Initialize with glbinding::Binding::initialize()
-#include <glbinding/gl/gl.h>
-using namespace gl;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
-#define GLFW_INCLUDE_NONE       // GLFW including OpenGL headers causes ambiguity or multiple definition errors.
-#include <glbinding/glbinding.h>// Initialize with glbinding::initialize()
-#include <glbinding/gl/gl.h>
-using namespace gl;
-#else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#endif
 
 namespace
 {
 
 SDL_Window* window = nullptr;
 SDL_GLContext gl_context;
-const char* glsl_version = nullptr;
 
 bool SetupPlatform(const char* name)
 {
@@ -56,14 +35,14 @@ bool SetupPlatform(const char* name)
         // Decide GL+GLSL versions
 #if __APPLE__
         // GL 3.2 Core + GLSL 150
-        glsl_version = "#version 150";
+        //const char* glsl_version = "#version 150";
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #else
         // GL 3.0 + GLSL 130
-        glsl_version = "#version 130";
+        //const char* glsl_version = "#version 130";
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -85,27 +64,6 @@ bool SetupPlatform(const char* name)
     }
 
     return succeeded;
-}
-
-bool InitOpenGLLoader()
-{
-    // Initialize OpenGL loader
-#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-    bool err = gl3wInit() != 0;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-    bool err = glewInit() != GLEW_OK;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-    bool err = gladLoadGL() == 0;
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
-    bool err = false;
-    glbinding::Binding::initialize();
-#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
-    bool err = false;
-    glbinding::initialize([](const char* name) { return (glbinding::ProcAddress)SDL_GL_GetProcAddress(name); });
-#else
-    bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-#endif
-    return !err;
 }
 
 bool SetupImGui()
@@ -132,6 +90,15 @@ bool InitPlatform()
 
 bool InitRenderer()
 {
+    // Decide GL+GLSL versions
+#if __APPLE__
+    // GL 3.2 Core + GLSL 150
+    const char* glsl_version = "#version 150";
+#else
+    // GL 3.0 + GLSL 130
+    const char* glsl_version = "#version 130";
+#endif
+
     // Setup Renderer bindings
     return ImGui_ImplOpenGL3_Init(glsl_version);
 }
@@ -144,7 +111,7 @@ bool BeginApplication(const char *name)
     {
         //printf("Error: %s\n", SDL_GetError());
     }
-    else if (!InitOpenGLLoader())
+    else if (!ImGuiApp::InitOpenGLLoader())
     {
         //fprintf(stderr, "Failed to initialize OpenGL loader!\n");
     }

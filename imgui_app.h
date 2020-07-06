@@ -1,3 +1,4 @@
+// dear imgui app: standalone application starter kit
 
 #pragma once
 #include "imgui.h"      // IMGUI_API
