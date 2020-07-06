@@ -27,6 +27,17 @@ using namespace gl;
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+// GLSL version
+#ifndef IMGUI_APP_GLSL_VERSION
+#ifdef __EMSCRIPTEN__
+#define IMGUI_APP_GLSL_VERSION "#version 100"
+//#define IMGUI_APP_GLSL_VERSION "#version 300 es"
+#elif __APPLE__
+#define IMGUI_APP_GLSL_VERSION "#version 150"
+#endif
+#define IMGUI_APP_GLSL_VERSION "#version 130"
+#endif
+
 namespace ImGuiApp
 {
 
