@@ -6,11 +6,53 @@ set(IMGUI_APP_INCLUDE_DIR ${IMGUI_APP_SOURCE_DIR})
 add_library(imgui_app STATIC)
 target_include_directories(imgui_app PUBLIC ${IMGUI_APP_INCLUDE_DIR})
 
-# Platform/Renderer Bindings
-include(cmake/imgui_app_platform.cmake)
-include(cmake/imgui_app_renderer.cmake)
-target_link_libraries(imgui_app ${IMGUI_APP_PLATFORM_LIBRARIES})
-target_link_libraries(imgui_app ${IMGUI_APP_RENDERER_LIBRARIES})
+# Platform options
+set(IMGUI_APP_PLATFORM "SDL2" CACHE STRING "Platform Binding")
+set(IMGUI_APP_PLATFORM_SDL2 OFF)
+
+if(IMGUI_APP_PLATFORM STREQUAL "SDL2")
+  set(IMGUI_APP_PLATFORM_SDL2 ON)
+  set(IMGUI_IMPL_PLATFORM_SDL2 ON)
+endif()
+
+# Platform Bindings
+include(cmake/imgui_impl_platform.cmake)
+target_link_libraries(imgui_app ${IMGUI_IMPL_PLATFORM_LIBRARIES})
+
+# Renderer options
+set(IMGUI_APP_RENDERER "OpenGL3" CACHE STRING "Renderer Binding")
+set(IMGUI_APP_RENDERER_OPENGL OFF)
+set(IMGUI_APP_RENDERER_OPENGL2 OFF)
+set(IMGUI_APP_RENDERER_OPENGL3 OFF)
+set(IMGUI_APP_RENDERER_VULKAN OFF)
+
+if(IMGUI_APP_RENDERER STREQUAL "OpenGL2")
+  set(IMGUI_APP_RENDERER_OPENGL ON)
+  set(IMGUI_APP_RENDERER_OPENGL2 ON)
+  set(IMGUI_IMPL_RENDERER_OPENGL2 ON)
+elseif(IMGUI_APP_RENDERER STREQUAL "OpenGL3")
+  set(IMGUI_APP_RENDERER_OPENGL ON)
+  set(IMGUI_APP_RENDERER_OPENGL3 ON)
+  set(IMGUI_IMPL_RENDERER_OPENGL3 ON)
+elseif(IMGUI_APP_RENDERER STREQUAL "Vulkan")
+  set(IMGUI_APP_RENDERER_VULKAN ON)
+  set(IMGUI_IMPL_RENDERER_VULKAN ON)
+endif()
+
+# OpenGL Loader options
+set(IMGUI_APP_OPENGL_LOADER "GLEW" CACHE STRING "OpenGL Loader")
+
+if(NOT IMGUI_APP_RENDERER_OPENGL3)
+  # unnecessary
+elseif(IMGUI_APP_OPENGL_LOADER STREQUAL "GLEW")
+  set(IMGUI_IMPL_OPENGL_LOADER_GLEW ON)
+elseif(IMGUI_APP_OPENGL_LOADER STREQUAL "GLAD")
+  set(IMGUI_IMPL_OPENGL_LOADER_GLAD ON)
+endif()
+
+# Renderer Bindings
+include(cmake/imgui_impl_renderer.cmake)
+target_link_libraries(imgui_app ${IMGUI_IMPL_RENDERER_LIBRARIES})
 
 # Sources
 target_sources(imgui_app PRIVATE
