@@ -40,7 +40,7 @@ elseif(IMGUI_APP_RENDERER_VULKAN) # Vulkan
   target_sources(imgui_app_renderer PRIVATE ${IMGUI_APP_RENDERER_INCLUDE_DIR}/imgui_impl_vulkan.cpp)
 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DIMGUI_VULKAN_DEBUG_REPORT)
+    target_compile_definitions(imgui_app_renderer PUBLIC IMGUI_VULKAN_DEBUG_REPORT)
   endif()
 endif()
 
@@ -59,11 +59,11 @@ endif()
 
 if(IMGUI_APP_OPENGL_LOADER_GLEW)
   find_package(GLEW REQUIRED)
-  add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
+  target_compile_definitions(imgui_app_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
   target_link_libraries(imgui_app_renderer ${GLEW_LIBRARIES})
 
 elseif(IMGUI_APP_OPENGL_LOADER_GLAD)
-  add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
+  target_compile_definitions(imgui_app_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
   target_link_libraries(imgui_app_renderer ${GLAD_LIBRARIES})
 endif()
 
