@@ -3,6 +3,7 @@
 #pragma once
 #include "imgui_app.h"      // IMGUI_APP_API
 
+#if defined(IMGUI_APP_RENDERER_OPENGL3)
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 //  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
@@ -26,6 +27,17 @@ using namespace gl;
 #else
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
+#elif defined(IMGUI_APP_RENDERER_OPENGL2)
+// OpenGL 2 header from platform headers
+#if defined(IMGUI_APP_PLATFORM_SDL2)
+#include <SDL_opengl.h>
+#elif defined(IMGUI_APP_PLATFORM_GLFW)
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
+#include <GLFW/glfw3.h>
+#endif
+#endif
 
 // Decide GL+GLSL versions
 #ifndef IMGUI_APP_GLSL_VERSION
@@ -37,6 +49,11 @@ using namespace gl;
 //#define IMGUI_APP_GLSL_VERSION "#version 300 es"
 #define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 2
 #define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 0
+#elif defined(IMGUI_APP_RENDERER_OPENGL2)
+// GL 2.*
+#define IMGUI_APP_GLSL_VERSION "#version 100" // not use
+#define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 2
+#define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 2
 #elif __APPLE__
 // GL 3.2 + GLSL 150
 #define IMGUI_APP_GLSL_VERSION "#version 150"

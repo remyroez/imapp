@@ -37,7 +37,7 @@ if(IMGUI_APP_RENDERER_OPENGL)
   elseif(IMGUI_APP_RENDERER_OPENGL2)
     # OpenGL 2
     add_definitions(-DIMGUI_APP_RENDERER_OPENGL2)
-    #target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_renderer_opengl2.cpp)
+    target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_renderer_opengl2.cpp)
   endif()
 elseif(IMGUI_APP_RENDERER_VULKAN)
   # Vulkan

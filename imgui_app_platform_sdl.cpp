@@ -1,4 +1,5 @@
 // dear imgui app: standalone application starter kit
+// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
 #include "imgui_app.h"
 #include "imgui_internal.h"
@@ -45,7 +46,9 @@ bool SetupPlatform(const char* name)
         window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_OPENGL);
 
         // Decide GL+GLSL versions
-#if __APPLE__
+#if !defined(IMGUI_APP_RENDERER_OPENGL3)
+        // not OpenGL 3
+#elif __APPLE__
         // GL 3.2 Core + GLSL 150
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -54,6 +57,7 @@ bool SetupPlatform(const char* name)
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
+        // GL Context version
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, IMGUI_APP_GL_CONTEXT_MAJOR_VERSION);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, IMGUI_APP_GL_CONTEXT_MINOR_VERSION);
 
