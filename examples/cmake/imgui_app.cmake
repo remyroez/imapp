@@ -9,10 +9,14 @@ target_include_directories(imgui_app PUBLIC ${IMGUI_APP_INCLUDE_DIR})
 # Platform options
 set(IMGUI_APP_PLATFORM "SDL2" CACHE STRING "Platform Binding")
 set(IMGUI_APP_PLATFORM_SDL2 OFF)
+set(IMGUI_APP_PLATFORM_GLFW OFF)
 
 if(IMGUI_APP_PLATFORM STREQUAL "SDL2")
   set(IMGUI_APP_PLATFORM_SDL2 ON)
   set(IMGUI_IMPL_PLATFORM_SDL2 ON)
+elseif(IMGUI_APP_PLATFORM STREQUAL "GLFW")
+  set(IMGUI_APP_PLATFORM_GLFW ON)
+  set(IMGUI_IMPL_PLATFORM_GLFW ON)
 endif()
 
 # Platform Bindings
@@ -64,6 +68,10 @@ if(IMGUI_APP_PLATFORM_SDL2)
   # SDL2
   target_compile_definitions(imgui_app PUBLIC IMGUI_APP_PLATFORM_SDL2)
   target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_platform_sdl.cpp)
+elseif(IMGUI_APP_PLATFORM_GLFW)
+  # GLFW
+  target_compile_definitions(imgui_app PUBLIC IMGUI_APP_PLATFORM_GLFW)
+  #target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_platform_glfw.cpp)
 endif()
 
 # Renderer
