@@ -18,6 +18,8 @@ namespace ImGuiApp
 
     IMGUI_APP_API bool ProcessEventPlatform();
 
+    IMGUI_APP_API void GetFramebufferSize(int &width, int &height);
+
     // for Renderer
     IMGUI_APP_API bool InitRenderer();
     IMGUI_APP_API void CleanupRenderer();

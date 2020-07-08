@@ -153,4 +153,11 @@ bool ProcessEventPlatform()
     return processed;
 }
 
+void GetFramebufferSize(int &width, int &height)
+{
+    auto &io = ImGui::GetIO();
+    width = (int)io.DisplaySize.x;
+    height = (int)io.DisplaySize.y;
+}
+
 }

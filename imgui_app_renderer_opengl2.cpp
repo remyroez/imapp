@@ -28,10 +28,13 @@ void BeginFrameRenderer()
 
 void EndFrameRenderer(const ImVec4 &clear_col)
 {
-    auto &io = ImGui::GetIO();
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    int display_w, display_h;
+    GetFramebufferSize(display_w, display_h);
+
+    glViewport(0, 0, display_w, display_h);
     glClearColor(clear_col.x, clear_col.y, clear_col.z, clear_col.w);
     glClear(GL_COLOR_BUFFER_BIT);
+    
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 }
 
