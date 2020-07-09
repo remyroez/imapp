@@ -53,11 +53,9 @@ bool SetupPlatform(const char* name)
     }
     else
     {
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#ifdef IMGUI_APP_RENDERER_OPENGL3
         // Decide GL+GLSL versions
-#if !defined(IMGUI_APP_RENDERER_OPENGL3)
-        // not OpenGL 3
-#elif __APPLE__
+#if __APPLE__
         // GL 3.2 Core + GLSL 150
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
