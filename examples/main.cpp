@@ -1,7 +1,5 @@
 // dear imgui app: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
-// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
-// (GL3W is a helper library to access OpenGL functions since there is no standard header to access modern OpenGL functions easily. Alternatives are GLEW, Glad, etc.)
 
 #include "imgui.h"
 #include "imgui_app.h"
@@ -11,7 +9,6 @@ int main(int, char**)
 {
     if (!ImGuiApp::BeginApplication("Dear ImGui App example"))
     {
-        //printf("Error: %s\n", SDL_GetError());
         return -1;
     }
 
@@ -44,6 +41,14 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    // Load Texture
+    // - We will here use ImGuiApp::LoadTextureFromFile to load images from disk.
+    int my_image_width = 0;
+    int my_image_height = 0;
+    ImTextureID my_image_texture;
+    bool loaded_texture = false;
+    //loaded_texture = ImGuiApp::LoadTextureFromFile("../examples/MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+
     // Main loop
     while (ImGuiApp::BeginFrame())
     {
@@ -74,6 +79,7 @@ int main(int, char**)
             ImGui::Text("counter = %d", counter);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
             ImGui::End();
         }
 
@@ -84,6 +90,17 @@ int main(int, char**)
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))
                 show_another_window = false;
+            ImGui::End();
+        }
+
+        // Ex. Show a loaded texture.
+        if (loaded_texture)
+        {
+            ImGui::SetNextWindowPos(ImVec2(60, 300), ImGuiCond_FirstUseEver);
+            ImGui::Begin("Texture Text");
+            ImGui::Text("pointer = %p", my_image_texture);
+            ImGui::Text("size = %d x %d", my_image_width, my_image_height);
+            ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
             ImGui::End();
         }
 
