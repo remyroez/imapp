@@ -139,7 +139,11 @@ bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int*
     if (out_width) *out_width = image_width;
     if (out_height) *out_height = image_height;
     
-    return CreateTexture(image_data, image_width, image_height, out_texture_id);
+    bool ret = CreateTexture(image_data, image_width, image_height, out_texture_id);
+
+    stbi_image_free(image_data);
+
+    return ret;
 }
 
 }
