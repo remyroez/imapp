@@ -26,20 +26,32 @@ int main(int argc, char *argv[])
 
 ## Supported environments
 
+### System
+
+- Windows (not tested)
+- macOS (not tested)
+- Linux
+    - Ubuntu
+    - other distros (not tested)
+- Emscripten (WIP)
+
 ### Platform
 
 - [SDL2](https://www.libsdl.org/)
-- [GLFW](https://github.com/glfw/glfw) (WIP)
+- [GLFW](https://github.com/glfw/glfw)
 
 ### Renderer
 
-- OpenGL 2/3
+- OpenGL 2
+- OpenGL 3
 - Vulkan
 
 #### OpenGL Loader
 
 - [GLEW](http://glew.sourceforge.net/)
+- [GL3W](https://github.com/skaslev/gl3w) (not tested)
 - [GLAD](https://github.com/Dav1dde/glad) (not tested)
+- [glbinding](https://github.com/cginternals/glbinding) (not tested)
 
 ## Links
 
