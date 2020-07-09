@@ -20,6 +20,8 @@ namespace ImGuiApp
 
     IMGUI_APP_API void GetFramebufferSize(int &width, int &height);
 
+    IMGUI_APP_API void *GetProcAddress(const char* proc_name);
+
     // for Renderer
     IMGUI_APP_API bool InitRenderer();
     IMGUI_APP_API void CleanupRenderer();

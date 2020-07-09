@@ -160,4 +160,9 @@ void GetFramebufferSize(int &width, int &height)
     height = (int)io.DisplaySize.y;
 }
 
+void *GetProcAddress(const char* proc_name)
+{
+    return SDL_GL_GetProcAddress(proc_name);
+}
+
 }
