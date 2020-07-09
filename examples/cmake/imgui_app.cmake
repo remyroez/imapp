@@ -71,7 +71,7 @@ if(IMGUI_APP_PLATFORM_SDL2)
 elseif(IMGUI_APP_PLATFORM_GLFW)
   # GLFW
   target_compile_definitions(imgui_app PUBLIC IMGUI_APP_PLATFORM_GLFW)
-  #target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_platform_glfw.cpp)
+  target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_platform_glfw.cpp)
 endif()
 
 # Renderer
