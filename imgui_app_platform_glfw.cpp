@@ -12,6 +12,11 @@
 #endif
 
 // Include glfw3.h after our OpenGL definitions
+#ifdef IMGUI_APP_RENDERER_OPENGL2
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
+#endif
 #include <GLFW/glfw3.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -77,7 +82,12 @@ bool SetupPlatform(const char* name)
         {
             glfwMakeContextCurrent(window);
             glfwSwapInterval(1); // Enable vsync
+
+#ifdef IMGUI_APP_RENDERER_OPENGL3
             succeeded = InitOpenGLLoader();
+#else
+            succeeded = true;
+#endif
         }
     }
 
