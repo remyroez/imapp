@@ -28,4 +28,6 @@ namespace ImGuiApp
 
     IMGUI_APP_API void BeginFrameRenderer();
     IMGUI_APP_API void EndFrameRenderer(const ImVec4 &clear_col = ImVec4(0, 0, 0, 1.f));
+
+    IMGUI_APP_API bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* out_texture_id);
 }
