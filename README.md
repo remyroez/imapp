@@ -12,9 +12,14 @@ int main(int argc, char *argv[])
 {
     if (ImGuiApp::BeginApplication("Dear ImGui Standalone application"))
     {
+        int my_image_width = 0;
+        int my_image_height = 0;
+        ImTextureID my_image_texture;
+        ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+
         while (ImGuiApp::BeginFrame())
         {
-            // ...
+            ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
             ImGuiApp::EndFrame();
         }
     }
@@ -57,6 +62,7 @@ int main(int argc, char *argv[])
 
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
+- [stb](https://github.com/nothings/stb)
 
 ## License
 
