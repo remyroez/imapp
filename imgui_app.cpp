@@ -4,6 +4,24 @@
 #include "imgui_app.h"
 #include "imgui_app_internal.h"
 
+#ifdef IMGUI_APP_STB_NAMESPACE
+namespace IMGUI_APP_STB_NAMESPACE
+{
+#endif
+
+#define STB_IMAGE_IMPLEMENTATION
+
+#ifdef IMGUI_APP_STB_IMAGE_FILENAME
+#include IMGUI_APP_STB_IMAGE_FILENAME
+#else
+#include "imgui_app_stb_image.h"
+#endif
+
+#ifdef IMGUI_APP_STB_NAMESPACE
+} // namespace ImStb
+using namespace IMGUI_APP_STB_NAMESPACE;
+#endif
+
 namespace
 {
 
@@ -107,6 +125,44 @@ bool IsRequestedQuit()
 void SetClearColor(const ImVec4& col)
 {
     clear_color = col;
+}
+
+bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int* out_width, int* out_height)
+{
+    // Load from file
+    int image_width = 0;
+    int image_height = 0;
+    unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+    if (image_data == NULL)
+        return false;
+    
+    bool ret = CreateTexture(image_data, image_width, image_height, out_texture_id);
+
+    stbi_image_free(image_data);
+
+    if (out_width) *out_width = image_width;
+    if (out_height) *out_height = image_height;
+    
+    return ret;
+}
+
+bool LoadTextureFromMemory(const unsigned char* data, int size, ImTextureID* out_texture_id, int* out_width, int* out_height)
+{
+    // Load from memory
+    int image_width = 0;
+    int image_height = 0;
+    unsigned char* image_data = stbi_load_from_memory(data, size, &image_width, &image_height, NULL, 4);
+    if (image_data == NULL)
+        return false;
+    
+    bool ret = CreateTexture(image_data, image_width, image_height, out_texture_id);
+
+    stbi_image_free(image_data);
+
+    if (out_width) *out_width = image_width;
+    if (out_height) *out_height = image_height;
+    
+    return ret;
 }
 
 }

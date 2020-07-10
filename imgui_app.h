@@ -9,6 +9,8 @@
 
 namespace ImGuiApp
 {
+    struct Texture;
+
     IMGUI_APP_API bool BeginApplication(const char* name);
     IMGUI_APP_API void EndApplication();
 
@@ -20,4 +22,7 @@ namespace ImGuiApp
     IMGUI_APP_API bool IsRequestedQuit();
 
     IMGUI_APP_API void SetClearColor(const ImVec4& col);
+
+    IMGUI_APP_API bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int* out_width, int* out_height);
+    IMGUI_APP_API bool LoadTextureFromMemory(const unsigned char* data, int size, ImTextureID* out_texture_id, int* out_width, int* out_height);
 }
