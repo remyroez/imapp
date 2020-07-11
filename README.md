@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
 - OpenGL 2
 - OpenGL 3
-- Vulkan
+- Vulkan ([customized](https://github.com/martty/imgui))
 
 #### OpenGL Loader
 
@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
 - [stb](https://github.com/nothings/stb)
+- [martty/imgui](https://github.com/martty/imgui) (User texture binding for Vulkan Renderer)
 
 ## License
 
