@@ -11,7 +11,12 @@
 #include "imgui_app_internal.h"
 
 #include "imgui.h"
+
+#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#include "imgui_app_impl_vulkan.h"
+#else
 #include "imgui_impl_vulkan.h"
+#endif
 
 #include <vulkan/vulkan.h>
 
@@ -338,6 +343,60 @@ static void resize_callback(void*, int w, int h)
     g_SwapChainResizeHeight = h;
 }
 
+static uint32_t ImGui_ImplVulkan_MemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits)
+{
+    //ImGui_ImplVulkan_InitInfo* v = &g_VulkanInitInfo;
+    VkPhysicalDeviceMemoryProperties prop;
+    vkGetPhysicalDeviceMemoryProperties(g_PhysicalDevice, &prop);
+    for (uint32_t i = 0; i < prop.memoryTypeCount; i++)
+        if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1<<i))
+            return i;
+    return 0xFFFFFFFF; // Unable to find memoryType
+}
+
+struct TextureData
+{
+    VkDescriptorSet          DescriptorSet = VK_NULL_HANDLE;
+
+    VkSampler                Sampler = VK_NULL_HANDLE;
+    VkDeviceMemory           Memory = VK_NULL_HANDLE;
+    VkImage                  Image = VK_NULL_HANDLE;
+    VkImageView              View = VK_NULL_HANDLE;
+};
+
+ImVector<TextureData*> Textures;
+
+TextureData* CreateTextureData()
+{
+    TextureData *tex_data = IM_NEW(TextureData);
+    Textures.push_back(tex_data);
+    return tex_data;
+}
+
+void DestroyTextureData(TextureData* TextureData)
+{
+    if (TextureData)
+    {
+        if (TextureData->View)    { vkDestroyImageView(g_Device, TextureData->View, g_Allocator); TextureData->View = VK_NULL_HANDLE; }
+        if (TextureData->Image)   { vkDestroyImage(g_Device, TextureData->Image, g_Allocator); TextureData->Image = VK_NULL_HANDLE; }
+        if (TextureData->Memory)  { vkFreeMemory(g_Device, TextureData->Memory, g_Allocator); TextureData->Memory = VK_NULL_HANDLE; }
+        if (TextureData->Sampler) { vkDestroySampler(g_Device, TextureData->Sampler, g_Allocator); TextureData->Sampler = VK_NULL_HANDLE; }
+        TextureData->DescriptorSet = VK_NULL_HANDLE;
+    }
+
+    IM_DELETE(TextureData);
+}
+
+void DestroyTextureDataAll()
+{
+    for (auto *Data : Textures)
+    {
+        DestroyTextureData(Data);
+    }
+
+    Textures.clear();
+}
+
 } // namespace
 
 namespace ImGuiApp
@@ -396,6 +455,8 @@ void CleanupRenderer()
     VkResult err = vkDeviceWaitIdle(g_Device);
     IMGUI_APP_VULKAN_CHECK_RESULT(err);
     ImGui_ImplVulkan_Shutdown();
+
+    DestroyTextureDataAll();
 }
 
 void BeginFrameRenderer()
@@ -431,10 +492,192 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     }
 }
 
-// Original code: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples#Example-for-OpenGL-users
 bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* out_texture_id)
 {
+#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+
+    ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
+    VkResult err;
+
+    // Use any command queue
+    VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
+    VkCommandBuffer command_buffer = wd->Frames[wd->FrameIndex].CommandBuffer;
+
+    err = vkResetCommandPool(g_Device, command_pool, 0);
+    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    VkCommandBufferBeginInfo begin_info = {};
+    begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    err = vkBeginCommandBuffer(command_buffer, &begin_info);
+    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+
+    //ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+
+    TextureData *texture_data = CreateTextureData();
+    static VkDeviceMemory           g_UploadBufferMemory = VK_NULL_HANDLE;
+    static VkBuffer                 g_UploadBuffer = VK_NULL_HANDLE;
+    static VkDeviceSize             g_BufferMemoryAlignment = 256;
+    
+    size_t upload_size = width*height*4*sizeof(char);
+
+    // Create the Image:
+    {
+        VkImageCreateInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        info.imageType = VK_IMAGE_TYPE_2D;
+        info.format = VK_FORMAT_R8G8B8A8_UNORM;
+        info.extent.width = width;
+        info.extent.height = height;
+        info.extent.depth = 1;
+        info.mipLevels = 1;
+        info.arrayLayers = 1;
+        info.samples = VK_SAMPLE_COUNT_1_BIT;
+        info.tiling = VK_IMAGE_TILING_OPTIMAL;
+        info.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        err = vkCreateImage(g_Device, &info, g_Allocator, &texture_data->Image);
+        check_vk_result(err);
+        VkMemoryRequirements req;
+        vkGetImageMemoryRequirements(g_Device, texture_data->Image, &req);
+        VkMemoryAllocateInfo alloc_info = {};
+        alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        alloc_info.allocationSize = req.size;
+        alloc_info.memoryTypeIndex = ImGui_ImplVulkan_MemoryType(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, req.memoryTypeBits);
+        err = vkAllocateMemory(g_Device, &alloc_info, g_Allocator, &texture_data->Memory);
+        check_vk_result(err);
+        err = vkBindImageMemory(g_Device, texture_data->Image, texture_data->Memory, 0);
+        check_vk_result(err);
+    }
+
+    // Create the Image View:
+    {
+        VkImageViewCreateInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        info.image = texture_data->Image;
+        info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        info.format = VK_FORMAT_R8G8B8A8_UNORM;
+        info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        info.subresourceRange.levelCount = 1;
+        info.subresourceRange.layerCount = 1;
+        err = vkCreateImageView(g_Device, &info, g_Allocator, &texture_data->View);
+        check_vk_result(err);
+    }
+
+    // Create the Image Sampler:
+    {
+        VkSamplerCreateInfo info = {};
+        info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        info.magFilter = VK_FILTER_LINEAR;
+        info.minFilter = VK_FILTER_LINEAR;
+        info.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        info.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        info.minLod = -1000;
+        info.maxLod = 1000;
+        info.maxAnisotropy = 1.0f;
+        err = vkCreateSampler(g_Device, &info, g_Allocator, &texture_data->Sampler);
+        check_vk_result(err);
+    }
+
+    VkDescriptorSet descriptor_set = (VkDescriptorSet)ImGui_ImplVulkan_AddTexture(texture_data->Sampler, texture_data->View, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+    // Create the Upload Buffer:
+    {
+        VkBufferCreateInfo buffer_info = {};
+        buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        buffer_info.size = upload_size;
+        buffer_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        err = vkCreateBuffer(g_Device, &buffer_info, g_Allocator, &g_UploadBuffer);
+        check_vk_result(err);
+        VkMemoryRequirements req;
+        vkGetBufferMemoryRequirements(g_Device, g_UploadBuffer, &req);
+        g_BufferMemoryAlignment = (g_BufferMemoryAlignment > req.alignment) ? g_BufferMemoryAlignment : req.alignment;
+        VkMemoryAllocateInfo alloc_info = {};
+        alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        alloc_info.allocationSize = req.size;
+        alloc_info.memoryTypeIndex = ImGui_ImplVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits);
+        err = vkAllocateMemory(g_Device, &alloc_info, g_Allocator, &g_UploadBufferMemory);
+        check_vk_result(err);
+        err = vkBindBufferMemory(g_Device, g_UploadBuffer, g_UploadBufferMemory, 0);
+        check_vk_result(err);
+    }
+
+    // Upload to Buffer:
+    {
+        char* map = NULL;
+        err = vkMapMemory(g_Device, g_UploadBufferMemory, 0, upload_size, 0, (void**)(&map));
+        check_vk_result(err);
+        memcpy(map, pixels, upload_size);
+        VkMappedMemoryRange range[1] = {};
+        range[0].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+        range[0].memory = g_UploadBufferMemory;
+        range[0].size = upload_size;
+        err = vkFlushMappedMemoryRanges(g_Device, 1, range);
+        check_vk_result(err);
+        vkUnmapMemory(g_Device, g_UploadBufferMemory);
+    }
+
+    // Copy to Image:
+    {
+        VkImageMemoryBarrier copy_barrier[1] = {};
+        copy_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        copy_barrier[0].dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        copy_barrier[0].oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        copy_barrier[0].newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        copy_barrier[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        copy_barrier[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        copy_barrier[0].image = texture_data->Image;
+        copy_barrier[0].subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        copy_barrier[0].subresourceRange.levelCount = 1;
+        copy_barrier[0].subresourceRange.layerCount = 1;
+        vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_HOST_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, copy_barrier);
+
+        VkBufferImageCopy region = {};
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.layerCount = 1;
+        region.imageExtent.width = width;
+        region.imageExtent.height = height;
+        region.imageExtent.depth = 1;
+        vkCmdCopyBufferToImage(command_buffer, g_UploadBuffer, texture_data->Image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+        VkImageMemoryBarrier use_barrier[1] = {};
+        use_barrier[0].sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        use_barrier[0].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        use_barrier[0].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        use_barrier[0].oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        use_barrier[0].newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        use_barrier[0].srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        use_barrier[0].dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        use_barrier[0].image = texture_data->Image;
+        use_barrier[0].subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        use_barrier[0].subresourceRange.levelCount = 1;
+        use_barrier[0].subresourceRange.layerCount = 1;
+        vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, use_barrier);
+    }
+
+    // Store our identifier
+    if (out_texture_id) *out_texture_id = (ImTextureID)descriptor_set;
+
+    VkSubmitInfo end_info = {};
+    end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    end_info.commandBufferCount = 1;
+    end_info.pCommandBuffers = &command_buffer;
+    err = vkEndCommandBuffer(command_buffer);
+    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    err = vkQueueSubmit(g_Queue, 1, &end_info, VK_NULL_HANDLE);
+    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+
+    err = vkDeviceWaitIdle(g_Device);
+    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    //ImGui_ImplVulkan_DestroyFontUploadObjects();
+
     return true;
+#else
+    return false;
+#endif
 }
 
 bool UploadFonts()
