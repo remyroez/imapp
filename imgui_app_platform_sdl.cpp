@@ -13,6 +13,11 @@
 
 #include <SDL.h>
 
+#ifdef IMGUI_APP_RENDERER_VULKAN
+#include <SDL_vulkan.h>
+#include <vulkan/vulkan.h>
+#endif
+
 namespace
 {
 
@@ -42,7 +47,7 @@ bool SetupPlatform(const char* name)
     {
         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#if defined(IMGUI_APP_RENDERER_OPENGL)
         window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_OPENGL);
 
         // Decide GL+GLSL versions
@@ -65,6 +70,8 @@ bool SetupPlatform(const char* name)
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+#elif defined(IMGUI_APP_RENDERER_VULKAN)
+        window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_VULKAN);
 #endif
 
         window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
@@ -116,7 +123,9 @@ void BeginFramePlatform()
 
 void EndFramePlatform()
 {
+#if defined(IMGUI_APP_RENDERER_OPENGL)
     SDL_GL_SwapWindow(window);
+#endif
 }
 
 bool ProcessEventPlatform()
@@ -155,14 +164,54 @@ bool ProcessEventPlatform()
 
 void GetFramebufferSize(int &width, int &height)
 {
-    auto &io = ImGui::GetIO();
-    width = (int)io.DisplaySize.x;
-    height = (int)io.DisplaySize.y;
+    SDL_GetWindowSize(window, &width, &height);
+}
+
+void SetFramebufferSizeCallback(void* callback)
+{
 }
 
 void *GetProcAddress(const char* proc_name)
 {
     return SDL_GL_GetProcAddress(proc_name);
+}
+
+const char** GetInstanceExtensions(unsigned int* extensions_count)
+{
+#ifdef IMGUI_APP_RENDERER_VULKAN
+    SDL_Vulkan_GetInstanceExtensions(window, extensions_count, NULL);
+    const char** extensions = new const char*[*extensions_count];
+    SDL_Vulkan_GetInstanceExtensions(window, extensions_count, extensions);
+
+    return extensions;
+#else
+    return NULL;
+#endif
+}
+
+void ReleaseInstanceExtensions(const char** extensions)
+{
+#ifdef IMGUI_APP_RENDERER_VULKAN
+    delete[] extensions;
+#endif
+}
+
+int CreateWindowSurface(void* instance, const void* allocator, void* surface)
+{
+#ifdef IMGUI_APP_RENDERER_VULKAN
+    VkResult err;
+    if (SDL_Vulkan_CreateSurface(window, (VkInstance)instance, (VkSurfaceKHR*)surface) == 0)
+    {
+        err = VK_NOT_READY;
+    }
+    else
+    {
+        err = VK_SUCCESS;
+    }
+    return err;
+#else
+    return 0;
+#endif
 }
 
 }

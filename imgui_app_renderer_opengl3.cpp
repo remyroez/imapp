@@ -11,6 +11,9 @@
 namespace ImGuiApp
 {
 
+bool SetupRenderer() { return true; }
+void ShutdownRenderer() {}
+
 bool InitRenderer()
 {
     // Setup Renderer bindings
@@ -62,6 +65,11 @@ bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* ou
         *out_texture_id = reinterpret_cast<ImTextureID>(image_texture);
     }
 
+    return true;
+}
+
+bool UploadFonts()
+{
     return true;
 }
 

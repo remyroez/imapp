@@ -7,15 +7,18 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#if defined(IMGUI_APP_RENDERER_OPENGL)
 #include "imgui_app_opengl_loader.h"
 #endif
 
 // Include glfw3.h after our OpenGL definitions
-#ifdef IMGUI_APP_RENDERER_OPENGL2
+#if defined(IMGUI_APP_RENDERER_OPENGL2)
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
+#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
 #endif
 #include <GLFW/glfw3.h>
 
@@ -53,7 +56,7 @@ bool SetupPlatform(const char* name)
     }
     else
     {
-#ifdef IMGUI_APP_RENDERER_OPENGL3
+#if defined(IMGUI_APP_RENDERER_OPENGL3)
         // Decide GL+GLSL versions
 #if __APPLE__
         // GL 3.2 Core + GLSL 150
@@ -67,6 +70,8 @@ bool SetupPlatform(const char* name)
         // GL Context version
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, IMGUI_APP_GL_CONTEXT_MAJOR_VERSION);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, IMGUI_APP_GL_CONTEXT_MINOR_VERSION);
+#elif defined(IMGUI_APP_RENDERER_VULKAN)
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
         // Create window with graphics context
@@ -78,13 +83,16 @@ bool SetupPlatform(const char* name)
         }
         else
         {
+#if defined(IMGUI_APP_RENDERER_OPENGL)
             glfwMakeContextCurrent(window);
             glfwSwapInterval(1); // Enable vsync
-
 #ifdef IMGUI_APP_RENDERER_OPENGL3
             succeeded = InitOpenGLLoader();
 #else
             succeeded = true;
+#endif
+#elif defined(IMGUI_APP_RENDERER_VULKAN)
+            succeeded = glfwVulkanSupported();
 #endif
         }
     }
@@ -122,7 +130,9 @@ void BeginFramePlatform()
 
 void EndFramePlatform()
 {
+#ifdef IMGUI_APP_RENDERER_OPENGL
     glfwSwapBuffers(window);
+#endif
 }
 
 bool ProcessEventPlatform()
@@ -147,9 +157,33 @@ void GetFramebufferSize(int &width, int &height)
     glfwGetFramebufferSize(window, &width, &height);
 }
 
+void SetFramebufferSizeCallback(void* callback)
+{
+    glfwSetFramebufferSizeCallback(window, (GLFWframebuffersizefun)callback);
+}
+
 void *GetProcAddress(const char* proc_name)
 {
     return (void *)glfwGetProcAddress(proc_name);
+}
+
+const char** GetInstanceExtensions(unsigned int* extensions_count)
+{
+    return glfwGetRequiredInstanceExtensions(extensions_count);
+}
+
+void ReleaseInstanceExtensions(const char** extensions)
+{
+    // not required.
+}
+
+int CreateWindowSurface(void* instance, const void* allocator, void* surface)
+{
+#ifdef IMGUI_APP_RENDERER_VULKAN
+    return glfwCreateWindowSurface((VkInstance)instance, window, (const VkAllocationCallbacks*)allocator, (VkSurfaceKHR*)surface);;
+#else
+    return 0;
+#endif
 }
 
 }

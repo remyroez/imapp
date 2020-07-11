@@ -92,7 +92,7 @@ if(IMGUI_APP_RENDERER_OPENGL)
 elseif(IMGUI_APP_RENDERER_VULKAN)
   # Vulkan
   target_compile_definitions(imgui_app PUBLIC IMGUI_APP_RENDERER_VULKAN)
-  #target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_renderer_vulkan.cpp)
+  target_sources(imgui_app PRIVATE ${IMGUI_APP_SOURCE_DIR}/imgui_app_renderer_vulkan.cpp)
 endif()
 
 set(IMGUI_APP_LIBRARIES imgui_app)
