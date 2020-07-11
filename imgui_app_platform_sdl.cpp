@@ -27,6 +27,9 @@ SDL_Window* window = nullptr;
 SDL_GLContext gl_context;
 #endif
 
+typedef void (* FramebufferSizeCallback)(void*,int,int);
+FramebufferSizeCallback framebuffersize_callback = NULL;
+
 }
 
 namespace ImGuiApp
@@ -143,18 +146,30 @@ bool ProcessEventPlatform()
         processed = ImGui_ImplSDL2_ProcessEvent(&event);
         if (!processed)
         {
-            processed = true;
             if (event.type == SDL_QUIT)
             {
+                processed = true;
                 RequestQuit();
             }
-            else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+            else if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(window))
             {
-                RequestQuit();
+                if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+                {
+                    processed = true;
+                    RequestQuit();
+                }
+                else if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+                {
+                    if (framebuffersize_callback)
+                    {
+                        framebuffersize_callback(window, (int)event.window.data1, (int)event.window.data2);
+                        processed = true;
+                    }
+                }
             }
             else
             {
-                processed = false;
+                // none.
             }
         }
     }
@@ -169,6 +184,7 @@ void GetFramebufferSize(int &width, int &height)
 
 void SetFramebufferSizeCallback(void* callback)
 {
+    framebuffersize_callback = (FramebufferSizeCallback)callback;
 }
 
 void *GetProcAddress(const char* proc_name)

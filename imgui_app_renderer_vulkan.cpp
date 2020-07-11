@@ -331,7 +331,7 @@ static void FramePresent(ImGui_ImplVulkanH_Window* wd)
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount; // Now we can use the next set of semaphores
 }
 
-static void glfw_resize_callback(void*, int w, int h)
+static void resize_callback(void*, int w, int h)
 {
     g_SwapChainRebuild = true;
     g_SwapChainResizeWidth = w;
@@ -359,7 +359,7 @@ bool SetupRenderer() {
     // Create Framebuffers
     int w, h;
     GetFramebufferSize(w, h);
-    SetFramebufferSizeCallback((void*)glfw_resize_callback);
+    SetFramebufferSizeCallback((void*)resize_callback);
     ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
     SetupVulkanWindow(wd, surface, w, h);
 
