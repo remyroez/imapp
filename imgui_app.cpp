@@ -57,6 +57,10 @@ bool BeginApplication(const char* name)
     {
         //printf("Error: %s\n", SDL_GetError());
     }
+    else if (!SetupRenderer())
+    {
+        //fprintf(stderr, "Failed to Setup Renderer Bindings!\n");
+    }
     else if (!SetupImGui())
     {
         //fprintf(stderr, "Failed to Setup Dear ImGui!\n");
@@ -84,6 +88,7 @@ void EndApplication()
     CleanupPlatform();
     CleanupImGui();
 
+    ShutdownRenderer();
     ShutdownPlatform();
 }
 
