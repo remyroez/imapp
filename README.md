@@ -54,9 +54,11 @@ int main(int argc, char *argv[])
 #### OpenGL Loader
 
 - [GLEW](http://glew.sourceforge.net/)
-- [GL3W](https://github.com/skaslev/gl3w) (not tested)
+- [GL3W](https://github.com/skaslev/gl3w)
 - [GLAD](https://github.com/Dav1dde/glad) (not tested)
-- [glbinding](https://github.com/cginternals/glbinding) (not tested)
+- [glbinding](https://github.com/cginternals/glbinding)
+    - v2 (not tested)
+    - v3 (not tested)
 
 ## Links
 

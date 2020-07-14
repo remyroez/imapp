@@ -2,7 +2,7 @@
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
 #include "imgui_app.h"
-#include "imgui_internal.h"
+#include "imgui_app_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -111,6 +111,8 @@ bool InitPlatform()
     return ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 #elif defined(IMGUI_APP_RENDERER_VULKAN)
     return ImGui_ImplSDL2_InitForVulkan(window);
+#else
+    return false;
 #endif
 }
 

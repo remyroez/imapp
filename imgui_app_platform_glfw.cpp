@@ -2,7 +2,7 @@
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
 #include "imgui_app.h"
-#include "imgui_internal.h"
+#include "imgui_app_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -115,6 +115,8 @@ bool InitPlatform()
     return ImGui_ImplGlfw_InitForOpenGL(window, true);
 #elif defined(IMGUI_APP_RENDERER_VULKAN)
     return ImGui_ImplGlfw_InitForVulkan(window, true);
+#else
+    return false;
 #endif
 }
 
