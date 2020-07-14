@@ -55,9 +55,16 @@ elseif(IMGUI_IMPL_OPENGL_LOADER_GL3W) # GL3W
   target_link_libraries(imgui_impl_renderer ${GL3W_LIBRARIES})
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLAD) # GLAD
-  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
-  target_include_directories(imgui_impl_renderer PUBLIC ${GLAD_INCLUDE_DIRS})
-  target_link_libraries(imgui_impl_renderer ${GLAD_LIBRARIES})
+  #TODO: Setup GLAD
+  #target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
+  #target_include_directories(imgui_impl_renderer PUBLIC ${GLAD_INCLUDE_DIRS})
+  #target_link_libraries(imgui_impl_renderer ${GLAD_LIBRARIES})
+
+elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2) # glbinding v2
+  #TODO: Setup glbinding v2
+
+elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3) # glbinding v3
+#TODO: Setup glbinding v3
 endif()
 
 # Renderer definitions
@@ -68,7 +75,7 @@ else()
 endif()
 
 # Renderer sources
-if(NOT IMGUI_IMPL_RENDERER_CUSTOM_SOURCE OR IMGUI_IMPL_RENDERER_CUSTOM_SOURCE STREQUAL "")
+if(NOT IMGUI_IMPL_RENDERER_VULKAN_CUSTOM_SOURCE OR IMGUI_IMPL_RENDERER_VULKAN_CUSTOM_SOURCE STREQUAL "")
   target_sources(imgui_impl_renderer PRIVATE ${IMGUI_IMPL_RENDERER_SOURCE})
 else()
   target_sources(imgui_impl_renderer PRIVATE ${IMGUI_IMPL_RENDERER_VULKAN_CUSTOM_SOURCE})
