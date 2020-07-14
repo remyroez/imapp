@@ -7,10 +7,16 @@
 #define IMGUI_APP_API              IMGUI_API
 #endif
 
+#if defined(IMGUI_APP_RENDERER_OPENGL)
+// defined
+#elif !defined(IMGUI_APP_RENDERER_OPENGL3) && !defined(IMGUI_APP_RENDERER_OPENGL2)
+// not opengl
+#else
+#define IMGUI_APP_RENDERER_OPENGL
+#endif
+
 namespace ImGuiApp
 {
-    struct Texture;
-
     IMGUI_APP_API bool BeginApplication(const char* name);
     IMGUI_APP_API void EndApplication();
 
