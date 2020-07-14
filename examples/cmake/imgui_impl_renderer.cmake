@@ -14,6 +14,7 @@ option(IMGUI_IMPL_RENDERER_VULKAN "Renderer for Vulkan" OFF)
 
 # OpenGL Loader options
 option(IMGUI_IMPL_OPENGL_LOADER_GLEW "OpenGL Loader GLEW" OFF)
+option(IMGUI_IMPL_OPENGL_LOADER_GL3W "OpenGL Loader GL3W" OFF)
 option(IMGUI_IMPL_OPENGL_LOADER_GLAD "OpenGL Loader GLAD" OFF)
 
 # Renderer
@@ -47,6 +48,11 @@ if(IMGUI_IMPL_OPENGL_LOADER_GLEW) # GLEW
   target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
   target_include_directories(imgui_impl_renderer PUBLIC ${GLEW_INCLUDE_DIRS})
   target_link_libraries(imgui_impl_renderer ${GLEW_LIBRARIES})
+
+elseif(IMGUI_IMPL_OPENGL_LOADER_GL3W) # GL3W
+  include(cmake/gl3w.cmake)
+  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GL3W)
+  target_link_libraries(imgui_impl_renderer ${GL3W_LIBRARIES})
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLAD) # GLAD
   target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
