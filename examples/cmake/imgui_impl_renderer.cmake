@@ -16,6 +16,8 @@ option(IMGUI_IMPL_RENDERER_VULKAN "Renderer for Vulkan" OFF)
 option(IMGUI_IMPL_OPENGL_LOADER_GLEW "OpenGL Loader GLEW" OFF)
 option(IMGUI_IMPL_OPENGL_LOADER_GL3W "OpenGL Loader GL3W" OFF)
 option(IMGUI_IMPL_OPENGL_LOADER_GLAD "OpenGL Loader GLAD" OFF)
+option(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2 "OpenGL Loader glbinding v2" OFF)
+option(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3 "OpenGL Loader glbinding v3" OFF)
 
 # Renderer
 set(IMGUI_IMPL_RENDERER_SOURCE "")
@@ -61,10 +63,14 @@ elseif(IMGUI_IMPL_OPENGL_LOADER_GLAD) # GLAD
   #target_link_libraries(imgui_impl_renderer ${GLAD_LIBRARIES})
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2) # glbinding v2
-  #TODO: Setup glbinding v2
+  find_package(glbinding REQUIRED)
+  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
+  target_link_libraries(imgui_impl_renderer glbinding::glbinding)
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3) # glbinding v3
-#TODO: Setup glbinding v3
+  find_package(glbinding REQUIRED)
+  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
+  target_link_libraries(imgui_impl_renderer glbinding::glbinding)
 endif()
 
 # Renderer definitions
