@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 - [GL3W](https://github.com/skaslev/gl3w)
 - [GLAD](https://github.com/Dav1dde/glad) (not tested)
 - [glbinding](https://github.com/cginternals/glbinding)
-    - v2 (not tested)
+    - v2
     - v3 (not tested)
 
 ## Links
