@@ -61,10 +61,14 @@ elseif(IMGUI_IMPL_OPENGL_LOADER_GLAD) # GLAD
   #target_link_libraries(imgui_impl_renderer ${GLAD_LIBRARIES})
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2) # glbinding v2
-  #TODO: Setup glbinding v2
+  find_package(glbinding REQUIRED)
+  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
+  target_link_libraries(imgui_impl_renderer glbinding::glbinding)
 
 elseif(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3) # glbinding v3
-#TODO: Setup glbinding v3
+  find_package(glbinding REQUIRED)
+  target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
+  target_link_libraries(imgui_impl_renderer glbinding::glbinding)
 endif()
 
 # Renderer definitions
