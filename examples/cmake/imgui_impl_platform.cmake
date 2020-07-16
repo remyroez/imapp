@@ -14,6 +14,7 @@ option(IMGUI_IMPL_PLATFORM_GLFW "Platform for GLFW" OFF)
 if(IMGUI_IMPL_PLATFORM_SDL2) # SDL2
   if(EMSCRIPTEN) # Emscripten
     # 
+    target_compile_options(imgui_impl_platform PUBLIC -s USE_SDL=2)
   else()
     find_package(SDL2 REQUIRED)
   endif()
