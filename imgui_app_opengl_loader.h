@@ -3,7 +3,15 @@
 #pragma once
 #include "imgui_app.h"      // IMGUI_APP_API
 
-#if defined(IMGUI_APP_RENDERER_OPENGL3)
+#if defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+// OpenGL ES 2
+#if defined(IMGUI_APP_PLATFORM_SDL2)
+#include <SDL_opengles2.h>
+#elif defined(IMGUI_APP_PLATFORM_GLFW)
+// GLFW for emscripten
+#endif
+
+#elif defined(IMGUI_APP_RENDERER_OPENGL3)
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 //  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
@@ -27,6 +35,7 @@ using namespace gl;
 #else
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
+
 #elif defined(IMGUI_APP_RENDERER_OPENGL2)
 // OpenGL 2 header from platform headers
 #if defined(IMGUI_APP_PLATFORM_SDL2)

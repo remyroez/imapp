@@ -15,6 +15,14 @@
 #define IMGUI_APP_RENDERER_OPENGL
 #endif
 
+#if defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+// defined
+#elif !defined(__EMSCRIPTEN__)
+// not emscripten
+#else
+#define IMGUI_APP_SYSTEM_EMSCRIPTEN
+#endif
+
 namespace ImGuiApp
 {
     IMGUI_APP_API bool BeginApplication(const char* name);

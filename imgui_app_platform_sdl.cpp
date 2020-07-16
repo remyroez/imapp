@@ -11,6 +11,10 @@
 #include "imgui_app_opengl_loader.h"
 #endif
 
+#if defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+#include <emscripten.h>
+#endif
+
 #include <SDL.h>
 
 #ifdef IMGUI_APP_RENDERER_VULKAN
@@ -56,6 +60,10 @@ bool SetupPlatform(const char* name)
         // Decide GL+GLSL versions
 #if !defined(IMGUI_APP_RENDERER_OPENGL3)
         // not OpenGL 3
+#elif defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+        // OpenGL ES 2 + Emscripten
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #elif __APPLE__
         // GL 3.2 Core + GLSL 150
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
@@ -76,6 +84,9 @@ bool SetupPlatform(const char* name)
 #elif defined(IMGUI_APP_RENDERER_VULKAN)
         window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_VULKAN);
 #endif
+
+        SDL_DisplayMode current;
+        SDL_GetCurrentDisplayMode(0, &current);
 
         window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 

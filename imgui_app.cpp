@@ -35,6 +35,13 @@ bool SetupImGui()
     IMGUI_CHECKVERSION();
     root_context = ImGui::CreateContext();
 
+#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
+    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = NULL;
+#endif
+
     return root_context != nullptr;
 }
 
