@@ -23,7 +23,11 @@ option(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3 "OpenGL Loader glbinding v3" OFF)
 set(IMGUI_IMPL_RENDERER_SOURCE "")
 
 if(IMGUI_IMPL_RENDERER_OPENGL2 OR IMGUI_IMPL_RENDERER_OPENGL3) # OpenGL
-  find_package(OpenGL REQUIRED)
+  if(EMSCRIPTEN) # Emscripten
+    # 
+  else()
+    find_package(OpenGL REQUIRED)
+  endif()
   target_link_libraries(imgui_impl_renderer ${OPENGL_LIBRARIES})
   target_include_directories(imgui_impl_renderer PUBLIC ${OPENGL_INCLUDE_DIRS})
 
@@ -45,7 +49,10 @@ elseif(IMGUI_IMPL_RENDERER_VULKAN) # Vulkan
 endif()
 
 # OpenGL Loader
-if(IMGUI_IMPL_OPENGL_LOADER_GLEW) # GLEW
+if(EMSCRIPTEN) # Emscripten
+  # 
+
+elseif(IMGUI_IMPL_OPENGL_LOADER_GLEW) # GLEW
   find_package(GLEW REQUIRED)
   target_compile_definitions(imgui_impl_renderer PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
   target_include_directories(imgui_impl_renderer PUBLIC ${GLEW_INCLUDE_DIRS})
