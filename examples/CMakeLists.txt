@@ -8,6 +8,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/sdl2-cmake-
 project(imgui_app_example C CXX)
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 
+# Copy example resources
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/MyImage01.jpg DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # Dear ImGui
 include(cmake/imgui.cmake)
 target_link_libraries(${PROJECT_NAME} ${IMGUI_LIBRARIES})
@@ -16,7 +19,8 @@ target_link_libraries(${PROJECT_NAME} ${IMGUI_LIBRARIES})
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(IMGUI_APP_EXAMPLE_EMSCRIPTEN_SHELL ${IMGUI_EXAMPLE_DIR}/example_emscripten/shell_minimal.html)
-    set(IMGUI_APP_EXAMPLE_LINK_FLAGS "-s USE_SDL=2 -s FETCH=1 --shell-file ${IMGUI_APP_EXAMPLE_EMSCRIPTEN_SHELL}")
+    set(IMGUI_APP_EXAMPLE_PRELOAD_FILE MyImage01.jpg)
+    set(IMGUI_APP_EXAMPLE_LINK_FLAGS "-s USE_SDL=2 -s FETCH=1 --shell-file ${IMGUI_APP_EXAMPLE_EMSCRIPTEN_SHELL} --no-heap-copy --preload-file ${IMGUI_APP_EXAMPLE_PRELOAD_FILE}")
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS ${IMGUI_APP_EXAMPLE_LINK_FLAGS})
 endif()
 

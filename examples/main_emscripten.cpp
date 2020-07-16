@@ -62,7 +62,12 @@ void main_loop(void* arg)
     static int my_image_height = 0;
     static ImTextureID my_image_texture;
     static bool loaded_texture = false;
-    //loaded_texture = ImGuiApp::LoadTextureFromFile("../examples/MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    static bool first_load = false;
+    if (!first_load)
+    {
+        first_load = true;
+        loaded_texture = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    }
 #endif
 
     // Main loop
