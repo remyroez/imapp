@@ -27,7 +27,7 @@ void main_loop(void*);
 int main(int, char**)
 {
     // Setup Platform/Renderer/Dear ImGui
-    if (!ImGuiApp::BeginApplication("Dear ImGui App example"))
+    if (!ImGuiApp::BeginApplication("Dear ImGui App Emscripten example"))
     {
         return -1;
     }
