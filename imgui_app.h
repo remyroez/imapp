@@ -44,3 +44,18 @@ namespace ImGuiApp
     IMGUI_APP_API bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int* out_width, int* out_height);
     IMGUI_APP_API bool LoadTextureFromMemory(const unsigned char* data, int size, ImTextureID* out_texture_id, int* out_width, int* out_height);
 }
+
+#define IMGUI_APP_MAIN_EX(NAME, MAIN_LOOP, USER_DATA) \
+int main(int, char**) { \
+    if (ImGuiApp::BeginApplication(NAME)) { \
+        ImGuiApp::StartMainLoop(MAIN_LOOP, USER_DATA); \
+    } \
+    ImGuiApp::EndApplication(); \
+    return 0; \
+}
+
+#define IMGUI_APP_MAIN(NAME) \
+void ImGui_App_MainLoop(void*); \
+IMGUI_APP_MAIN_EX(NAME, ImGui_App_MainLoop, NULL) \
+void ImGui_App_MainLoop(void*)
+

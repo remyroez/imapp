@@ -4,28 +4,47 @@ Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/i
 
 ## Usage
 
+### Basic
+
 ```cpp
 #include "imgui.h"
 #include "imgui_app.h"
 
 int main(int argc, char *argv[])
 {
-    if (ImGuiApp::BeginApplication("Dear ImGui Standalone application"))
+    if (ImGuiApp::BeginApplication("Example"))
     {
         int my_image_width = 0;
         int my_image_height = 0;
         ImTextureID my_image_texture;
-        ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+        bool success = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 
         while (ImGuiApp::BeginFrame())
         {
-            ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
+            if (success)
+            {
+                ImGui::Begin("Texture");
+                ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
+                ImGui::End();
+            }
             ImGuiApp::EndFrame();
         }
     }
     ImGuiApp::EndApplication();
 
     return 0;
+}
+```
+
+### Minimal
+
+```cpp
+#include "imgui.h"
+#include "imgui_app.h"
+
+IMGUI_APP_MAIN("Minimal Example")
+{
+    ImGui::Text("foo bar baz");
 }
 ```
 

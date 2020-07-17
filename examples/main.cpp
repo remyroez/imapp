@@ -7,6 +7,7 @@
 // Main code
 int main(int, char**)
 {
+    // Setup Platform/Renderer/Dear ImGui
     if (!ImGuiApp::BeginApplication("Dear ImGui App example"))
     {
         return -1;

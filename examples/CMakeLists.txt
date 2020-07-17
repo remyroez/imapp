@@ -34,9 +34,13 @@ endif()
 include(cmake/imgui_app.cmake)
 target_link_libraries(${PROJECT_NAME} ${IMGUI_APP_LIBRARIES})
 
-# Example sources
+# Example options
+option(IMGUI_APP_EXAMPLE_MINIMAL "Minimal example" OFF)
 
-if(EMSCRIPTEN)
+# Example sources
+if(IMGUI_APP_EXAMPLE_MINIMAL)
+    target_sources(${PROJECT_NAME} PRIVATE main_minimal.cpp)
+elseif(EMSCRIPTEN)
     target_sources(${PROJECT_NAME} PRIVATE main_emscripten.cpp)
 else()
     target_sources(${PROJECT_NAME} PRIVATE main.cpp)
