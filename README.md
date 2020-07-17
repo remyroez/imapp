@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 - Linux
     - Ubuntu
     - other distros (not tested)
-- Emscripten (WIP)
+- Emscripten
 
 ### Platform
 

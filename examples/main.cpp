@@ -47,7 +47,7 @@ int main(int, char**)
     int my_image_height = 0;
     ImTextureID my_image_texture;
     bool loaded_texture = false;
-    //loaded_texture = ImGuiApp::LoadTextureFromFile("../examples/MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    loaded_texture = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 
     // Main loop
     while (ImGuiApp::BeginFrame())

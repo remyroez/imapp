@@ -4,6 +4,10 @@
 #include "imgui_app.h"
 #include "imgui_app_internal.h"
 
+#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #ifdef IMGUI_APP_STB_NAMESPACE
 namespace IMGUI_APP_STB_NAMESPACE
 {
@@ -25,15 +29,24 @@ using namespace IMGUI_APP_STB_NAMESPACE;
 namespace
 {
 
-ImGuiContext *root_context = nullptr;
+ImGuiContext *root_context = NULL;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 bool done = false;
+
+void (*main_loop)(void*) = NULL;
 
 bool SetupImGui()
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     root_context = ImGui::CreateContext();
+
+#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
+    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = NULL;
+#endif
 
     return root_context != nullptr;
 }
@@ -42,6 +55,13 @@ void CleanupImGui()
 {
     ImGui::DestroyContext();
     root_context = nullptr;
+}
+
+void MainLoop(void* arg)
+{
+    ImGuiApp::BeginFrame();
+    if (main_loop) main_loop(arg);
+    ImGuiApp::EndFrame();
 }
 
 }
@@ -101,7 +121,7 @@ bool BeginFrame()
     BeginFramePlatform();
     ImGui::NewFrame();
 
-    return !done;
+    return !IsRequestedQuit();
 }
 
 void EndFrame()
@@ -110,6 +130,22 @@ void EndFrame()
     ImGui::Render();
     EndFrameRenderer(clear_color);
     EndFramePlatform();
+}
+
+void StartMainLoop(void (*func)(void*), void* user_data)
+{
+    if (func == NULL) return;
+    main_loop = func;
+
+#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+    // This function call won't return, and will engage in an infinite loop, processing events from the browser, and dispatching them.
+    emscripten_set_main_loop_arg(MainLoop, user_data, 0, true);
+#else
+    while (!IsRequestedQuit())
+    {
+        MainLoop(user_data);
+    }
+#endif
 }
 
 void RequestQuit()
