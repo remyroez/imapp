@@ -64,7 +64,7 @@ void MainLoop(void* arg)
     ImApp::EndFrame();
 }
 
-}
+} // namespace
 
 namespace ImApp
 {

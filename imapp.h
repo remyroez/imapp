@@ -55,7 +55,6 @@ int main(int, char**) { \
 }
 
 #define IMAPP_MAIN(NAME) \
-void Imapp_MainLoop(void*); \
-IMAPP_MAIN_EX(NAME, Imapp_MainLoop, NULL) \
-void Imapp_MainLoop(void*)
-
+void ImApp_MainLoop(void*); \
+IMAPP_MAIN_EX(NAME, ImApp_MainLoop, NULL) \
+void ImApp_MainLoop(void*)

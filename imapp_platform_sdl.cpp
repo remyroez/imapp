@@ -34,7 +34,7 @@ SDL_GLContext gl_context;
 typedef void (* FramebufferSizeCallback)(void*,int,int);
 FramebufferSizeCallback framebuffersize_callback = NULL;
 
-}
+} // namespace
 
 namespace ImApp
 {
