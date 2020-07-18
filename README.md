@@ -2,56 +2,53 @@
 
 Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/imgui)
 
-## Usage
-
-### Basic
-
-```cpp
-#include "imgui.h"
-#include "imapp.h"
-
-int main(int argc, char *argv[])
-{
-    if (ImApp::BeginApplication("Example"))
-    {
-        int my_image_width = 0;
-        int my_image_height = 0;
-        ImTextureID my_image_texture;
-        bool success = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
-
-        while (ImApp::BeginFrame())
-        {
-            if (success)
-            {
-                ImGui::Begin("Texture");
-                ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
-                ImGui::End();
-            }
-            ImApp::EndFrame();
-        }
-    }
-    ImApp::EndApplication();
-
-    return 0;
-}
-```
-
-### Minimal
-
-```cpp
-#include "imgui.h"
-#include "imapp.h"
-
-IMAPP_MAIN("Minimal Example")
-{
-    ImGui::Text("foo bar baz");
-}
-```
-
 ## Features
 
 - Dear ImGui like Minimum API (referred to [Dear ImGui examples](https://github.com/ocornut/imgui/tree/master/examples))
 - Texture loading API (referred to [Dear ImGui tutorial](https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples))
+
+## Usage
+
+### Basic API
+
+Basic API is used just like any other Dear ImGui functions(Begin***/End*** pair).
+
+```cpp
+if (ImApp::BeginApplication("Example")) // Setup
+{
+    while (ImApp::BeginFrame()) // Process events
+    {
+        ...
+        ImApp::EndFrame(); // Rendering
+    }
+}
+ImApp::EndApplication(); // Shutdown
+```
+
+### Texture loading API
+
+Loads a texture and returns its size and ImTextureID.
+
+```cpp
+int my_image_width = 0;
+int my_image_height = 0;
+ImTextureID my_image_texture;
+bool ret = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+IM_ASSERT(ret);
+```
+
+### Minimal Macro
+
+You can use integrated macro instead of main function.
+
+```cpp
+#include "imapp.h"
+
+IMAPP_MAIN("Minimal Example") // Setup/Process events/Rendering/Shutdown
+{
+    ImGui::Text(...);
+}
+```
 
 ## Supported environments
 
@@ -69,7 +66,7 @@ IMAPP_MAIN("Minimal Example")
 - [SDL2](https://www.libsdl.org/)
 - [GLFW](https://github.com/glfw/glfw)
 
-### Renderer
+## Renderer
 
 - OpenGL 2
 - OpenGL 3
@@ -143,19 +140,20 @@ Note: Consult `examples/` directory for CMake build example.
     - glbinding v3
         - `IMGUI_IMPL_OPENGL_LOADER_GLBINDING3`
 
+## TODO
+
+- Split examples directory into separate repo
+- Setup build/test on GitHub Actions
+- Test on Windows/macOS
+- Support iOS/Android
+- Support other platform/renderer
+
 ## Links
 
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
 - [stb](https://github.com/nothings/stb)
 - [martty/imgui](https://github.com/martty/imgui) (User texture binding for Vulkan Renderer)
-
-## TODO
-
-- Setup build/test on GitHub Actions
-- Test on Windows/macOS
-- Support iOS/Android
-- Support other platform/renderer
 
 ## License
 
