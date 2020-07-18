@@ -1,8 +1,8 @@
-// dear imgui app: standalone example application
+// imapp: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 namespace
 {
@@ -21,7 +21,7 @@ bool once = false;
 
 } // namespace
 
-IMGUI_APP_MAIN("Dear ImGui App minimal example")
+IMAPP_MAIN("imapp minimal example")
 {
     // Setup once
     if (!once)

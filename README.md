@@ -1,4 +1,4 @@
-# imgui_app
+# imapp
 
 Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/imgui)
 
@@ -8,7 +8,7 @@ Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/i
 
 ```cpp
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 int main(int argc, char *argv[])
 {
@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
 
 ```cpp
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
-IMGUI_APP_MAIN("Minimal Example")
+IMAPP_MAIN("Minimal Example")
 {
     ImGui::Text("foo bar baz");
 }

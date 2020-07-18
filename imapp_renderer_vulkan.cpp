@@ -1,4 +1,4 @@
-// dear imgui app: Vulkan Renderer
+// imapp: Vulkan Renderer
 
 // Important note to the reader who wish to integrate imgui_impl_vulkan.cpp/.h in their own engine/app.
 // - Common ImGui_ImplVulkan_XXX functions and structures are used to interface with imgui_impl_vulkan.cpp/.h.
@@ -7,13 +7,13 @@
 //   the back-end itself (imgui_impl_vulkan.cpp), but should PROBABLY NOT be used by your own engine/app code.
 // Read comments in imgui_impl_vulkan.h.
 
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
 #include "imgui.h"
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
-#include "imgui_app_impl_vulkan.h"
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#include "imapp_impl_vulkan.h"
 #else
 #include "imgui_impl_vulkan.h"
 #endif
@@ -46,7 +46,7 @@ static bool                     g_SwapChainRebuild = false;
 static int                      g_SwapChainResizeWidth = 0;
 static int                      g_SwapChainResizeHeight = 0;
 
-#define IMGUI_APP_VULKAN_CHECK_RESULT(err) check_vk_result_line(err, __LINE__)
+#define IMAPP_VULKAN_CHECK_RESULT(err) check_vk_result_line(err, __LINE__)
 
 static void check_vk_result(VkResult err)
 {
@@ -101,7 +101,7 @@ static void SetupVulkan(const char** extensions, uint32_t extensions_count)
 
         // Create Vulkan Instance
         err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         free(extensions_ext);
 
         // Get the function pointer (required for any extensions)
@@ -115,11 +115,11 @@ static void SetupVulkan(const char** extensions, uint32_t extensions_count)
         debug_report_ci.pfnCallback = debug_report;
         debug_report_ci.pUserData = NULL;
         err = vkCreateDebugReportCallbackEXT(g_Instance, &debug_report_ci, g_Allocator, &g_DebugReport);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
 #else
         // Create Vulkan Instance without any debug feature
         err = vkCreateInstance(&create_info, g_Allocator, &g_Instance);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         IM_UNUSED(g_DebugReport);
 #endif
     }
@@ -128,12 +128,12 @@ static void SetupVulkan(const char** extensions, uint32_t extensions_count)
     {
         uint32_t gpu_count;
         err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, NULL);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         IM_ASSERT(gpu_count > 0);
 
         VkPhysicalDevice* gpus = (VkPhysicalDevice*)malloc(sizeof(VkPhysicalDevice) * gpu_count);
         err = vkEnumeratePhysicalDevices(g_Instance, &gpu_count, gpus);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
 
         // If a number >1 of GPUs got reported, you should find the best fit GPU for your purpose
         // e.g. VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU if available, or with the greatest memory available, etc.
@@ -175,7 +175,7 @@ static void SetupVulkan(const char** extensions, uint32_t extensions_count)
         create_info.enabledExtensionCount = device_extension_count;
         create_info.ppEnabledExtensionNames = device_extensions;
         err = vkCreateDevice(g_PhysicalDevice, &create_info, g_Allocator, &g_Device);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         vkGetDeviceQueue(g_Device, g_QueueFamily, 0, &g_Queue);
     }
 
@@ -202,7 +202,7 @@ static void SetupVulkan(const char** extensions, uint32_t extensions_count)
         pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
         pool_info.pPoolSizes = pool_sizes;
         err = vkCreateDescriptorPool(g_Device, &pool_info, g_Allocator, &g_DescriptorPool);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
     }
 }
 
@@ -266,24 +266,24 @@ static void FrameRender(ImGui_ImplVulkanH_Window* wd, ImDrawData* draw_data)
     VkSemaphore image_acquired_semaphore  = wd->FrameSemaphores[wd->SemaphoreIndex].ImageAcquiredSemaphore;
     VkSemaphore render_complete_semaphore = wd->FrameSemaphores[wd->SemaphoreIndex].RenderCompleteSemaphore;
     err = vkAcquireNextImageKHR(g_Device, wd->Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &wd->FrameIndex);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     ImGui_ImplVulkanH_Frame* fd = &wd->Frames[wd->FrameIndex];
     {
         err = vkWaitForFences(g_Device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);    // wait indefinitely instead of periodically checking
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
 
         err = vkResetFences(g_Device, 1, &fd->Fence);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
     }
     {
         err = vkResetCommandPool(g_Device, fd->CommandPool, 0);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         VkCommandBufferBeginInfo info = {};
         info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
     }
     {
         VkRenderPassBeginInfo info = {};
@@ -315,9 +315,9 @@ static void FrameRender(ImGui_ImplVulkanH_Window* wd, ImDrawData* draw_data)
         info.pSignalSemaphores = &render_complete_semaphore;
 
         err = vkEndCommandBuffer(fd->CommandBuffer);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
         err = vkQueueSubmit(g_Queue, 1, &info, fd->Fence);
-        IMGUI_APP_VULKAN_CHECK_RESULT(err);
+        IMAPP_VULKAN_CHECK_RESULT(err);
     }
 }
 
@@ -332,7 +332,7 @@ static void FramePresent(ImGui_ImplVulkanH_Window* wd)
     info.pSwapchains = &wd->Swapchain;
     info.pImageIndices = &wd->FrameIndex;
     VkResult err = vkQueuePresentKHR(g_Queue, &info);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->ImageCount; // Now we can use the next set of semaphores
 }
 
@@ -413,7 +413,7 @@ bool SetupRenderer() {
     // Create Window Surface
     VkSurfaceKHR surface;
     VkResult err = static_cast<VkResult>(CreateWindowSurface(g_Instance, g_Allocator, &surface));
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     // Create Framebuffers
     int w, h;
@@ -453,7 +453,7 @@ bool InitRenderer()
 void CleanupRenderer()
 {
     VkResult err = vkDeviceWaitIdle(g_Device);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     ImGui_ImplVulkan_Shutdown();
 
     DestroyTextureDataAll();
@@ -494,7 +494,7 @@ void EndFrameRenderer(const ImVec4 &clear_col)
 
 bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* out_texture_id)
 {
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
 
     ImGui_ImplVulkanH_Window* wd = &g_MainWindowData;
     VkResult err;
@@ -504,12 +504,12 @@ bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* ou
     VkCommandBuffer command_buffer = wd->Frames[wd->FrameIndex].CommandBuffer;
 
     err = vkResetCommandPool(g_Device, command_pool, 0);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     VkCommandBufferBeginInfo begin_info = {};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     err = vkBeginCommandBuffer(command_buffer, &begin_info);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     //ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
 
@@ -666,12 +666,12 @@ bool CreateTexture(unsigned char* pixels, int width, int height, ImTextureID* ou
     end_info.commandBufferCount = 1;
     end_info.pCommandBuffers = &command_buffer;
     err = vkEndCommandBuffer(command_buffer);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     err = vkQueueSubmit(g_Queue, 1, &end_info, VK_NULL_HANDLE);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     err = vkDeviceWaitIdle(g_Device);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     //ImGui_ImplVulkan_DestroyFontUploadObjects();
 
     return true;
@@ -690,12 +690,12 @@ bool UploadFonts()
     VkCommandBuffer command_buffer = wd->Frames[wd->FrameIndex].CommandBuffer;
 
     err = vkResetCommandPool(g_Device, command_pool, 0);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     VkCommandBufferBeginInfo begin_info = {};
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     err = vkBeginCommandBuffer(command_buffer, &begin_info);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
 
@@ -704,12 +704,12 @@ bool UploadFonts()
     end_info.commandBufferCount = 1;
     end_info.pCommandBuffers = &command_buffer;
     err = vkEndCommandBuffer(command_buffer);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     err = vkQueueSubmit(g_Queue, 1, &end_info, VK_NULL_HANDLE);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
 
     err = vkDeviceWaitIdle(g_Device);
-    IMGUI_APP_VULKAN_CHECK_RESULT(err);
+    IMAPP_VULKAN_CHECK_RESULT(err);
     ImGui_ImplVulkan_DestroyFontUploadObjects();
 
     return true;

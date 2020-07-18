@@ -1,9 +1,9 @@
-// dear imgui app: standalone example application
+// imapp: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (Emscripten is a C++-to-javascript compiler, used to publish executables for the web. See https://emscripten.org/)
 
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 namespace
 {
@@ -27,7 +27,7 @@ void main_loop(void*);
 int main(int, char**)
 {
     // Setup Platform/Renderer/Dear ImGui
-    if (!ImGuiApp::BeginApplication("Dear ImGui App Emscripten example"))
+    if (!ImGuiApp::BeginApplication("imapp Emscripten example"))
     {
         return -1;
     }

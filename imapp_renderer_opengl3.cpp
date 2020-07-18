@@ -1,16 +1,12 @@
-// dear imgui app: standalone application starter kit
+// imapp: standalone application starter kit
 
-// **DO NOT USE THIS CODE IF YOUR CODE/ENGINE IS USING MODERN OPENGL (SHADERS, VBO, VAO, etc.)**
-// **Prefer using the code in the example_sdl_opengl3/ folder**
-// See imgui_impl_sdl.cpp for details.
-
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
 #include "imgui.h"
-#include "imgui_impl_opengl2.h"
+#include "imgui_impl_opengl3.h"
 
-#include "imgui_app_opengl_loader.h"
+#include "imapp_opengl_loader.h"
 
 namespace ImGuiApp
 {
@@ -21,12 +17,12 @@ void ShutdownRenderer() {}
 bool InitRenderer()
 {
     // Setup Renderer bindings
-    return ImGui_ImplOpenGL2_Init();
+    return ImGui_ImplOpenGL3_Init(IMAPP_GLSL_VERSION);
 }
 
 void BeginFrameRenderer()
 {
-    ImGui_ImplOpenGL2_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
 }
 
 void EndFrameRenderer(const ImVec4 &clear_col)
@@ -37,19 +33,13 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     glViewport(0, 0, display_w, display_h);
     glClearColor(clear_col.x, clear_col.y, clear_col.z, clear_col.w);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    // If you are using this code with non-legacy OpenGL header/contexts (which you should not, prefer using imgui_impl_opengl3.cpp!!),
-    // you may need to backup/reset/restore current shader using the commented lines below.
-    //GLint last_program;
-    //glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-    //glUseProgram(0);
-    ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-    //glUseProgram(last_program);
+    
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void CleanupRenderer()
 {
-    ImGui_ImplOpenGL2_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
 }
 
 // Original code: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples#Example-for-OpenGL-users

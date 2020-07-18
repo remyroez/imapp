@@ -1,23 +1,23 @@
-// dear imgui app: standalone application starter kit
+// imapp: standalone application starter kit
 // (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 
-#ifdef IMGUI_APP_RENDERER_OPENGL
-#include "imgui_app_opengl_loader.h"
+#ifdef IMAPP_RENDERER_OPENGL
+#include "imapp_opengl_loader.h"
 #endif
 
-#if defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+#if defined(IMAPP_SYSTEM_EMSCRIPTEN)
 #include <emscripten.h>
 #endif
 
 #include <SDL.h>
 
-#ifdef IMGUI_APP_RENDERER_VULKAN
+#ifdef IMAPP_RENDERER_VULKAN
 #include <SDL_vulkan.h>
 #include <vulkan/vulkan.h>
 #endif
@@ -25,9 +25,9 @@
 namespace
 {
 
-SDL_Window* window = nullptr;
+SDL_Window* window = NULL;
 
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#ifdef IMAPP_RENDERER_OPENGL
 SDL_GLContext gl_context;
 #endif
 
@@ -54,13 +54,13 @@ bool SetupPlatform(const char* name)
     {
         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
-#if defined(IMGUI_APP_RENDERER_OPENGL)
+#if defined(IMAPP_RENDERER_OPENGL)
         window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_OPENGL);
 
         // Decide GL+GLSL versions
-#if !defined(IMGUI_APP_RENDERER_OPENGL3)
+#if !defined(IMAPP_RENDERER_OPENGL3)
         // not OpenGL 3
-#elif defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+#elif defined(IMAPP_SYSTEM_EMSCRIPTEN)
         // OpenGL ES 2 + Emscripten
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -74,14 +74,14 @@ bool SetupPlatform(const char* name)
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
         // GL Context version
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, IMGUI_APP_GL_CONTEXT_MAJOR_VERSION);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, IMGUI_APP_GL_CONTEXT_MINOR_VERSION);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, IMAPP_GL_CONTEXT_MAJOR_VERSION);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, IMAPP_GL_CONTEXT_MINOR_VERSION);
 
         // Create window with graphics context
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#elif defined(IMAPP_RENDERER_VULKAN)
         window_flags = (SDL_WindowFlags)(window_flags | SDL_WINDOW_VULKAN);
 #endif
 
@@ -90,7 +90,7 @@ bool SetupPlatform(const char* name)
 
         window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#ifdef IMAPP_RENDERER_OPENGL
         gl_context = SDL_GL_CreateContext(window);
         SDL_GL_MakeCurrent(window, gl_context);
         SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -105,12 +105,12 @@ bool SetupPlatform(const char* name)
 
 void ShutdownPlatform()
 {
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#ifdef IMAPP_RENDERER_OPENGL
     SDL_GL_DeleteContext(gl_context);
 #endif
 
     SDL_DestroyWindow(window);
-    window = nullptr;
+    window = NULL;
     
     SDL_Quit();
 }
@@ -118,9 +118,9 @@ void ShutdownPlatform()
 bool InitPlatform()
 {
     // Setup Platform bindings
-#if defined(IMGUI_APP_RENDERER_OPENGL)
+#if defined(IMAPP_RENDERER_OPENGL)
     return ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#elif defined(IMAPP_RENDERER_VULKAN)
     return ImGui_ImplSDL2_InitForVulkan(window);
 #else
     return false;
@@ -139,7 +139,7 @@ void BeginFramePlatform()
 
 void EndFramePlatform()
 {
-#if defined(IMGUI_APP_RENDERER_OPENGL)
+#if defined(IMAPP_RENDERER_OPENGL)
     SDL_GL_SwapWindow(window);
 #endif
 }
@@ -207,7 +207,7 @@ void *GetProcAddress(const char* proc_name)
 
 const char** GetInstanceExtensions(unsigned int* extensions_count)
 {
-#ifdef IMGUI_APP_RENDERER_VULKAN
+#ifdef IMAPP_RENDERER_VULKAN
     SDL_Vulkan_GetInstanceExtensions(window, extensions_count, NULL);
     const char** extensions = new const char*[*extensions_count];
     SDL_Vulkan_GetInstanceExtensions(window, extensions_count, extensions);
@@ -220,14 +220,14 @@ const char** GetInstanceExtensions(unsigned int* extensions_count)
 
 void ReleaseInstanceExtensions(const char** extensions)
 {
-#ifdef IMGUI_APP_RENDERER_VULKAN
+#ifdef IMAPP_RENDERER_VULKAN
     delete[] extensions;
 #endif
 }
 
 int CreateWindowSurface(void* instance, const void* allocator, void* surface)
 {
-#ifdef IMGUI_APP_RENDERER_VULKAN
+#ifdef IMAPP_RENDERER_VULKAN
     VkResult err;
     if (SDL_Vulkan_CreateSurface(window, (VkInstance)instance, (VkSurfaceKHR*)surface) == 0)
     {

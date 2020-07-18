@@ -1,14 +1,14 @@
-// dear imgui app: standalone example application
+// imapp: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 // Main code
 int main(int, char**)
 {
     // Setup Platform/Renderer/Dear ImGui
-    if (!ImGuiApp::BeginApplication("Dear ImGui App example"))
+    if (!ImGuiApp::BeginApplication("imapp example"))
     {
         return -1;
     }

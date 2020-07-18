@@ -1,22 +1,22 @@
-// dear imgui app: standalone application starter kit
+// imapp: standalone application starter kit
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
 
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 
-#if defined(IMGUI_APP_RENDERER_OPENGL)
-#include "imgui_app_opengl_loader.h"
+#if defined(IMAPP_RENDERER_OPENGL)
+#include "imapp_opengl_loader.h"
 #endif
 
 // Include glfw3.h after our OpenGL definitions
-#if defined(IMGUI_APP_RENDERER_OPENGL2)
+#if defined(IMAPP_RENDERER_OPENGL2)
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#elif defined(IMAPP_RENDERER_VULKAN)
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #endif
@@ -56,7 +56,7 @@ bool SetupPlatform(const char* name)
     }
     else
     {
-#if defined(IMGUI_APP_RENDERER_OPENGL3)
+#if defined(IMAPP_RENDERER_OPENGL3)
         // Decide GL+GLSL versions
 #if __APPLE__
         // GL 3.2 Core + GLSL 150
@@ -68,9 +68,9 @@ bool SetupPlatform(const char* name)
         //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
         // GL Context version
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, IMGUI_APP_GL_CONTEXT_MAJOR_VERSION);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, IMGUI_APP_GL_CONTEXT_MINOR_VERSION);
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, IMAPP_GL_CONTEXT_MAJOR_VERSION);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, IMAPP_GL_CONTEXT_MINOR_VERSION);
+#elif defined(IMAPP_RENDERER_VULKAN)
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
@@ -83,15 +83,15 @@ bool SetupPlatform(const char* name)
         }
         else
         {
-#if defined(IMGUI_APP_RENDERER_OPENGL)
+#if defined(IMAPP_RENDERER_OPENGL)
             glfwMakeContextCurrent(window);
             glfwSwapInterval(1); // Enable vsync
-#ifdef IMGUI_APP_RENDERER_OPENGL3
+#ifdef IMAPP_RENDERER_OPENGL3
             succeeded = InitOpenGLLoader();
 #else
             succeeded = true;
 #endif
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#elif defined(IMAPP_RENDERER_VULKAN)
             succeeded = glfwVulkanSupported();
 #endif
         }
@@ -111,9 +111,9 @@ void ShutdownPlatform()
 bool InitPlatform()
 {
     // Setup Platform bindings
-#if defined(IMGUI_APP_RENDERER_OPENGL)
+#if defined(IMAPP_RENDERER_OPENGL)
     return ImGui_ImplGlfw_InitForOpenGL(window, true);
-#elif defined(IMGUI_APP_RENDERER_VULKAN)
+#elif defined(IMAPP_RENDERER_VULKAN)
     return ImGui_ImplGlfw_InitForVulkan(window, true);
 #else
     return false;
@@ -132,7 +132,7 @@ void BeginFramePlatform()
 
 void EndFramePlatform()
 {
-#ifdef IMGUI_APP_RENDERER_OPENGL
+#ifdef IMAPP_RENDERER_OPENGL
     glfwSwapBuffers(window);
 #endif
 }
@@ -181,7 +181,7 @@ void ReleaseInstanceExtensions(const char** extensions)
 
 int CreateWindowSurface(void* instance, const void* allocator, void* surface)
 {
-#ifdef IMGUI_APP_RENDERER_VULKAN
+#ifdef IMAPP_RENDERER_VULKAN
     return glfwCreateWindowSurface((VkInstance)instance, window, (const VkAllocationCallbacks*)allocator, (VkSurfaceKHR*)surface);;
 #else
     return 0;
