@@ -48,6 +48,11 @@ IMAPP_MAIN("Minimal Example")
 }
 ```
 
+## Features
+
+- Dear ImGui like Minimum API (referred to [Dear ImGui examples](https://github.com/ocornut/imgui/tree/master/examples))
+- Texture loading API (referred to [Dear ImGui tutorial](https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples))
+
 ## Supported environments
 
 ### System
@@ -68,6 +73,7 @@ IMAPP_MAIN("Minimal Example")
 
 - OpenGL 2
 - OpenGL 3
+- OpenGL ES 2 (for Emscripten)
 - Vulkan ([customized](https://github.com/martty/imgui))
 
 #### OpenGL Loader
@@ -85,6 +91,13 @@ IMAPP_MAIN("Minimal Example")
 - [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
 - [stb](https://github.com/nothings/stb)
 - [martty/imgui](https://github.com/martty/imgui) (User texture binding for Vulkan Renderer)
+
+## TODO
+
+- Setup build/test on GitHub Actions
+- Test on Windows/macOS
+- Support iOS/Android
+- Support other platform/renderer
 
 ## License
 
