@@ -1,9 +1,9 @@
-// dear imgui app: standalone example application
+// imapp: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (Emscripten is a C++-to-javascript compiler, used to publish executables for the web. See https://emscripten.org/)
 
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 namespace
 {
@@ -27,7 +27,7 @@ void main_loop(void*);
 int main(int, char**)
 {
     // Setup Platform/Renderer/Dear ImGui
-    if (!ImGuiApp::BeginApplication("Dear ImGui App Emscripten example"))
+    if (!ImApp::BeginApplication("imapp Emscripten example"))
     {
         return -1;
     }
@@ -60,13 +60,13 @@ int main(int, char**)
     //ImGui::StyleColorsClassic();
 
     // Load Texture
-    // - We will here use ImGuiApp::LoadTextureFromFile to load images from disk.
+    // - We will here use ImApp::LoadTextureFromFile to load images from disk.
 #ifndef IMGUI_DISABLE_FILE_FUNCTIONS
-    loaded_texture = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    loaded_texture = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 #endif
 
     // This function call won't return, and will engage in an infinite loop, processing events from the browser, and dispatching them.
-    ImGuiApp::StartMainLoop(main_loop);
+    ImApp::StartMainLoop(main_loop);
 }
 
 void main_loop(void* arg)
@@ -91,7 +91,7 @@ void main_loop(void* arg)
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
         if (ImGui::ColorEdit3("clear color", (float*)&clear_color)) // Edit 3 floats representing a color
         {
-            ImGuiApp::SetClearColor(clear_color);
+            ImApp::SetClearColor(clear_color);
         }
 
         if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)

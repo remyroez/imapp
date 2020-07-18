@@ -1,17 +1,17 @@
-// dear imgui app: OpenGL Loader
+// imapp: OpenGL Loader
 
 #pragma once
-#include "imgui_app.h"      // IMGUI_APP_API
+#include "imapp.h"      // IMAPP_API
 
-#if defined(IMGUI_APP_SYSTEM_EMSCRIPTEN)
+#if defined(IMAPP_SYSTEM_EMSCRIPTEN)
 // OpenGL ES 2
-#if defined(IMGUI_APP_PLATFORM_SDL2)
+#if defined(IMAPP_PLATFORM_SDL2)
 #include <SDL_opengles2.h>
-#elif defined(IMGUI_APP_PLATFORM_GLFW)
+#elif defined(IMAPP_PLATFORM_GLFW)
 // GLFW for emscripten
 #endif
 
-#elif defined(IMGUI_APP_RENDERER_OPENGL3)
+#elif defined(IMAPP_RENDERER_OPENGL3)
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 //  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
@@ -36,11 +36,11 @@ using namespace gl;
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
-#elif defined(IMGUI_APP_RENDERER_OPENGL2)
+#elif defined(IMAPP_RENDERER_OPENGL2)
 // OpenGL 2 header from platform headers
-#if defined(IMGUI_APP_PLATFORM_SDL2)
+#if defined(IMAPP_PLATFORM_SDL2)
 #include <SDL_opengl.h>
-#elif defined(IMGUI_APP_PLATFORM_GLFW)
+#elif defined(IMAPP_PLATFORM_GLFW)
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -49,36 +49,36 @@ using namespace gl;
 #endif
 
 // Decide GL+GLSL versions
-#ifndef IMGUI_APP_GLSL_VERSION
+#ifndef IMAPP_GLSL_VERSION
 #ifdef __EMSCRIPTEN__
 // For the browser using Emscripten, we are going to use WebGL1 with GL ES2. See the Makefile. for requirement details.
 // It is very likely the generated file won't work in many browsers. Firefox is the only sure bet, but I have successfully
 // run this code on Chrome for Android for example.
-#define IMGUI_APP_GLSL_VERSION "#version 100"
-//#define IMGUI_APP_GLSL_VERSION "#version 300 es"
-#define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 2
-#define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 0
-#elif defined(IMGUI_APP_RENDERER_OPENGL2)
+#define IMAPP_GLSL_VERSION "#version 100"
+//#define IMAPP_GLSL_VERSION "#version 300 es"
+#define IMAPP_GL_CONTEXT_MAJOR_VERSION 2
+#define IMAPP_GL_CONTEXT_MINOR_VERSION 0
+#elif defined(IMAPP_RENDERER_OPENGL2)
 // GL 2.*
-#define IMGUI_APP_GLSL_VERSION "#version 100" // not use
-#define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 2
-#define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 2
+#define IMAPP_GLSL_VERSION "#version 100" // not use
+#define IMAPP_GL_CONTEXT_MAJOR_VERSION 2
+#define IMAPP_GL_CONTEXT_MINOR_VERSION 2
 #elif __APPLE__
 // GL 3.2 + GLSL 150
-#define IMGUI_APP_GLSL_VERSION "#version 150"
-#define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 3
-#define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 2
+#define IMAPP_GLSL_VERSION "#version 150"
+#define IMAPP_GL_CONTEXT_MAJOR_VERSION 3
+#define IMAPP_GL_CONTEXT_MINOR_VERSION 2
 #else
 // GL 3.0 + GLSL 130
-#define IMGUI_APP_GLSL_VERSION "#version 130"
-#define IMGUI_APP_GL_CONTEXT_MAJOR_VERSION 3
-#define IMGUI_APP_GL_CONTEXT_MINOR_VERSION 0
+#define IMAPP_GLSL_VERSION "#version 130"
+#define IMAPP_GL_CONTEXT_MAJOR_VERSION 3
+#define IMAPP_GL_CONTEXT_MINOR_VERSION 0
 #endif
 #endif
 
-namespace ImGuiApp
+namespace ImApp
 {
 
-IMGUI_APP_API bool InitOpenGLLoader();
+IMAPP_API bool InitOpenGLLoader();
 
 }

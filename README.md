@@ -1,4 +1,4 @@
-# imgui_app
+# imapp
 
 Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/imgui)
 
@@ -8,18 +8,18 @@ Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/i
 
 ```cpp
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 int main(int argc, char *argv[])
 {
-    if (ImGuiApp::BeginApplication("Example"))
+    if (ImApp::BeginApplication("Example"))
     {
         int my_image_width = 0;
         int my_image_height = 0;
         ImTextureID my_image_texture;
-        bool success = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+        bool success = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 
-        while (ImGuiApp::BeginFrame())
+        while (ImApp::BeginFrame())
         {
             if (success)
             {
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
                 ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
                 ImGui::End();
             }
-            ImGuiApp::EndFrame();
+            ImApp::EndFrame();
         }
     }
-    ImGuiApp::EndApplication();
+    ImApp::EndApplication();
 
     return 0;
 }
@@ -40,13 +40,18 @@ int main(int argc, char *argv[])
 
 ```cpp
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
-IMGUI_APP_MAIN("Minimal Example")
+IMAPP_MAIN("Minimal Example")
 {
     ImGui::Text("foo bar baz");
 }
 ```
+
+## Features
+
+- Dear ImGui like Minimum API (referred to [Dear ImGui examples](https://github.com/ocornut/imgui/tree/master/examples))
+- Texture loading API (referred to [Dear ImGui tutorial](https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples))
 
 ## Supported environments
 
@@ -68,6 +73,7 @@ IMGUI_APP_MAIN("Minimal Example")
 
 - OpenGL 2
 - OpenGL 3
+- OpenGL ES 2 (for Emscripten)
 - Vulkan ([customized](https://github.com/martty/imgui))
 
 #### OpenGL Loader
@@ -85,6 +91,13 @@ IMGUI_APP_MAIN("Minimal Example")
 - [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
 - [stb](https://github.com/nothings/stb)
 - [martty/imgui](https://github.com/martty/imgui) (User texture binding for Vulkan Renderer)
+
+## TODO
+
+- Setup build/test on GitHub Actions
+- Test on Windows/macOS
+- Support iOS/Android
+- Support other platform/renderer
 
 ## License
 

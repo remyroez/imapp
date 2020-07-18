@@ -1,14 +1,14 @@
-// dear imgui app: standalone application starter kit
+// imapp: standalone application starter kit
 
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 
-#include "imgui_app_opengl_loader.h"
+#include "imapp_opengl_loader.h"
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool SetupRenderer() { return true; }
@@ -17,7 +17,7 @@ void ShutdownRenderer() {}
 bool InitRenderer()
 {
     // Setup Renderer bindings
-    return ImGui_ImplOpenGL3_Init(IMGUI_APP_GLSL_VERSION);
+    return ImGui_ImplOpenGL3_Init(IMAPP_GLSL_VERSION);
 }
 
 void BeginFrameRenderer()

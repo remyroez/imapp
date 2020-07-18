@@ -1,8 +1,8 @@
-// dear imgui app: OpenGL Loader
+// imapp: OpenGL Loader
 
-#include "imgui_app_opengl_loader.h"
+#include "imapp_opengl_loader.h"
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool InitOpenGLLoader()

@@ -25,7 +25,7 @@
 #include <vulkan/vulkan.h>
 
 // https://github.com/martty/imgui/commit/f1f948bea715754ad5e83d4dd9f928aecb4ed1d3
-//#define IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+//#define IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
 
 // Initialization data, for ImGui_ImplVulkan_Init()
 // [Please zero-clear before use!]
@@ -54,7 +54,7 @@ IMGUI_IMPL_API bool     ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer comm
 IMGUI_IMPL_API void     ImGui_ImplVulkan_DestroyFontUploadObjects();
 IMGUI_IMPL_API void     ImGui_ImplVulkan_SetMinImageCount(uint32_t min_image_count); // To override MinImageCount after initialization (e.g. if swap chain is recreated)
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
 IMGUI_IMPL_API ImTextureID    ImGui_ImplVulkan_AddTexture(VkSampler sampler, VkImageView image_view, VkImageLayout image_layout);
 #endif
 

@@ -1,29 +1,29 @@
-// dear imgui app: standalone application starter kit
+// imapp: standalone application starter kit
 
 #include "imgui.h"
-#include "imgui_app.h"
-#include "imgui_app_internal.h"
+#include "imapp.h"
+#include "imapp_internal.h"
 
-#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+#ifdef IMAPP_SYSTEM_EMSCRIPTEN
 #include <emscripten.h>
 #endif
 
-#ifdef IMGUI_APP_STB_NAMESPACE
-namespace IMGUI_APP_STB_NAMESPACE
+#ifdef IMAPP_STB_NAMESPACE
+namespace IMAPP_STB_NAMESPACE
 {
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#ifdef IMGUI_APP_STB_IMAGE_FILENAME
-#include IMGUI_APP_STB_IMAGE_FILENAME
+#ifdef IMAPP_STB_IMAGE_FILENAME
+#include IMAPP_STB_IMAGE_FILENAME
 #else
-#include "imgui_app_stb_image.h"
+#include "imapp_stb_image.h"
 #endif
 
-#ifdef IMGUI_APP_STB_NAMESPACE
+#ifdef IMAPP_STB_NAMESPACE
 } // namespace ImStb
-using namespace IMGUI_APP_STB_NAMESPACE;
+using namespace IMAPP_STB_NAMESPACE;
 #endif
 
 namespace
@@ -41,32 +41,32 @@ bool SetupImGui()
     IMGUI_CHECKVERSION();
     root_context = ImGui::CreateContext();
 
-#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+#ifdef IMAPP_SYSTEM_EMSCRIPTEN
     // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
     // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = NULL;
 #endif
 
-    return root_context != nullptr;
+    return root_context != NULL;
 }
 
 void CleanupImGui()
 {
     ImGui::DestroyContext();
-    root_context = nullptr;
+    root_context = NULL;
 }
 
 void MainLoop(void* arg)
 {
-    ImGuiApp::BeginFrame();
+    ImApp::BeginFrame();
     if (main_loop) main_loop(arg);
-    ImGuiApp::EndFrame();
+    ImApp::EndFrame();
 }
 
-}
+} // namespace
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool BeginApplication(const char* name)
@@ -75,23 +75,23 @@ bool BeginApplication(const char* name)
 
     if (!SetupPlatform(name))
     {
-        //printf("Error: %s\n", SDL_GetError());
+        fprintf(stderr, "Failed to Setup Platform Bindings!\n");
     }
     else if (!SetupRenderer())
     {
-        //fprintf(stderr, "Failed to Setup Renderer Bindings!\n");
+        fprintf(stderr, "Failed to Setup Renderer Bindings!\n");
     }
     else if (!SetupImGui())
     {
-        //fprintf(stderr, "Failed to Setup Dear ImGui!\n");
+        fprintf(stderr, "Failed to Setup Dear ImGui!\n");
     }
     else if (!InitPlatform())
     {
-        //fprintf(stderr, "Failed to Setup Platform Bindings!\n");
+        fprintf(stderr, "Failed to Init Platform Bindings!\n");
     }
     else if (!InitRenderer())
     {
-        //fprintf(stderr, "Failed to Setup Renderer Bindings!\n");
+        fprintf(stderr, "Failed to Init Renderer Bindings!\n");
     }
     else
     {
@@ -137,7 +137,7 @@ void StartMainLoop(void (*func)(void*), void* user_data)
     if (func == NULL) return;
     main_loop = func;
 
-#ifdef IMGUI_APP_SYSTEM_EMSCRIPTEN
+#ifdef IMAPP_SYSTEM_EMSCRIPTEN
     // This function call won't return, and will engage in an infinite loop, processing events from the browser, and dispatching them.
     emscripten_set_main_loop_arg(MainLoop, user_data, 0, true);
 #else

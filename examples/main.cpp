@@ -1,14 +1,14 @@
-// dear imgui app: standalone example application
+// imapp: standalone example application
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 
 #include "imgui.h"
-#include "imgui_app.h"
+#include "imapp.h"
 
 // Main code
 int main(int, char**)
 {
     // Setup Platform/Renderer/Dear ImGui
-    if (!ImGuiApp::BeginApplication("Dear ImGui App example"))
+    if (!ImApp::BeginApplication("imapp example"))
     {
         return -1;
     }
@@ -43,15 +43,15 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Load Texture
-    // - We will here use ImGuiApp::LoadTextureFromFile to load images from disk.
+    // - We will here use ImApp::LoadTextureFromFile to load images from disk.
     int my_image_width = 0;
     int my_image_height = 0;
     ImTextureID my_image_texture;
     bool loaded_texture = false;
-    loaded_texture = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    loaded_texture = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 
     // Main loop
-    while (ImGuiApp::BeginFrame())
+    while (ImApp::BeginFrame())
     {
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
@@ -71,7 +71,7 @@ int main(int, char**)
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
             if (ImGui::ColorEdit3("clear color", (float*)&clear_color)) // Edit 3 floats representing a color
             {
-                ImGuiApp::SetClearColor(clear_color);
+                ImApp::SetClearColor(clear_color);
             }
 
             if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
@@ -105,10 +105,10 @@ int main(int, char**)
             ImGui::End();
         }
 
-        ImGuiApp::EndFrame();
+        ImApp::EndFrame();
     }
 
-    ImGuiApp::EndApplication();
+    ImApp::EndApplication();
 
     return 0;
 }

@@ -47,7 +47,7 @@
 //  2016-08-27: Vulkan: Fix Vulkan example for use when a depth buffer is active.
 
 #include "imgui.h"
-#include "imgui_app_impl_vulkan.h"
+#include "imapp_impl_vulkan.h"
 #include <stdio.h>
 
 // Reusable buffers used for rendering 1 current in-flight frame, for ImGui_ImplVulkan_RenderDrawData()
@@ -271,7 +271,7 @@ static void ImGui_ImplVulkan_SetupRenderState(ImDrawData* draw_data, VkCommandBu
     // Bind pipeline and descriptor sets:
     {
         vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, g_Pipeline);
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
         // skip
 #else
         VkDescriptorSet desc_set[1] = { g_DescriptorSet };
@@ -428,7 +428,7 @@ void ImGui_ImplVulkan_RenderDrawData(ImDrawData* draw_data, VkCommandBuffer comm
                     scissor.extent.height = (uint32_t)(clip_rect.w - clip_rect.y);
                     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
                     // Bind descriptorset with font or user texture
                     VkDescriptorSet desc_set[1] = { (VkDescriptorSet)pcmd->TextureId };
                     vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, g_PipelineLayout, 0, 1, desc_set, 0, NULL);
@@ -500,7 +500,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
         check_vk_result(err);
     }
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
     VkDescriptorSet font_descriptor_set = (VkDescriptorSet)ImGui_ImplVulkan_AddTexture(g_FontSampler, g_FontView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 #else
     // Update the Descriptor Set:
@@ -595,7 +595,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
     }
 
     // Store our identifier
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
     io.Fonts->TexID = (ImTextureID)font_descriptor_set;
 #else
     io.Fonts->TexID = (ImTextureID)(intptr_t)g_FontImage;
@@ -651,7 +651,7 @@ bool ImGui_ImplVulkan_CreateDeviceObjects()
         binding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         binding[0].descriptorCount = 1;
         binding[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
         // skip
 #else
         binding[0].pImmutableSamplers = sampler;
@@ -664,7 +664,7 @@ bool ImGui_ImplVulkan_CreateDeviceObjects()
         check_vk_result(err);
     }
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
     // skip
 #else
     // Create Descriptor Set:
@@ -1251,7 +1251,7 @@ void ImGui_ImplVulkanH_DestroyWindowRenderBuffers(VkDevice device, ImGui_ImplVul
     buffers->Count = 0;
 }
 
-#ifdef IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#ifdef IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
 
 ImTextureID ImGui_ImplVulkan_AddTexture(VkSampler sampler, VkImageView image_view, VkImageLayout image_layout)
 {
@@ -1288,4 +1288,4 @@ ImTextureID ImGui_ImplVulkan_AddTexture(VkSampler sampler, VkImageView image_vie
     return (ImTextureID)descriptor_set;
 }
 
-#endif // IMGUI_APP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#endif // IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
