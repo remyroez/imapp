@@ -85,6 +85,64 @@ IMAPP_MAIN("Minimal Example")
     - v2
     - v3 (not tested)
 
+## Building
+
+Note: Consult `examples/` directory for CMake build example.
+
+### Add required files
+
+- Dear ImGui core libraries
+- Dear ImGui Platform/Renderer bindings
+    - If you use Vulkan, use the file described below.
+- imapp core libaries
+    - `imapp.cpp`
+    - `imapp.h`
+    - `imapp_internal.h`
+    - `imapp_stb_image.h`
+- imapp Platform bindings
+    - SDL2
+        - `imapp_platform_sdl.cpp`
+    - GLFW
+        - `imapp_platform_glfw.cpp`
+- imapp Renderer bindings
+    - OpenGL
+        - `imapp_opengl_loader.cpp`
+        - `imapp_opengl_loader.h`
+        - OpenGL 3
+            - `imapp_renderer_opengl3.cpp`
+        - OpenGL 2
+            - `imapp_renderer_opengl2.cpp`
+    - Vulkan
+        - `imapp_renderer_vulkan.cpp`
+        - `imapp_impl_vulkan.cpp` (Custom binding)
+        - `imapp_impl_vulkan.h`
+
+### Add required definitions
+
+- Platform
+    - SDL2
+        - `IMAPP_PLATFORM_SDL2`
+    - GLFW
+        - `IMAPP_PLATFORM_GLFW`
+- Renderer
+    - OpenGL 3
+        - `IMAPP_RENDERER_OPENGL3`
+    - OpenGL 2
+        - `IMAPP_RENDERER_OPENGL2`
+    - Vulkan
+        - `IMAPP_RENDERER_VULKAN`
+- OpenGL Loader (Only OpenGL 3)
+    - GLEW
+        - `IMGUI_IMPL_OPENGL_LOADER_GLEW`
+    - GL3W
+        - `IMGUI_IMPL_OPENGL_LOADER_GL3W`
+    - GLAD
+        - `IMGUI_IMPL_OPENGL_LOADER_GLAD`
+    - glbinding v2
+        - `IMGUI_IMPL_OPENGL_LOADER_GLBINDING2`
+    - glbinding v3
+        - `IMGUI_IMPL_OPENGL_LOADER_GLBINDING3`
+
 ## Links
 
 - [Dear ImGui](https://github.com/ocornut/imgui)
