@@ -12,7 +12,7 @@
 
 #include "imapp_opengl_loader.h"
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool SetupRenderer() { return true; }

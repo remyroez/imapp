@@ -399,7 +399,7 @@ void DestroyTextureDataAll()
 
 } // namespace
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool SetupRenderer() {

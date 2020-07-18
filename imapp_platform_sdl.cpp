@@ -36,7 +36,7 @@ FramebufferSizeCallback framebuffersize_callback = NULL;
 
 }
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool SetupPlatform(const char* name)

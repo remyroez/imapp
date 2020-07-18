@@ -25,7 +25,7 @@
 #define IMAPP_SYSTEM_EMSCRIPTEN
 #endif
 
-namespace ImGuiApp
+namespace ImApp
 {
     IMAPP_API bool BeginApplication(const char* name);
     IMAPP_API void EndApplication();
@@ -47,10 +47,10 @@ namespace ImGuiApp
 
 #define IMAPP_MAIN_EX(NAME, MAIN_LOOP, USER_DATA) \
 int main(int, char**) { \
-    if (ImGuiApp::BeginApplication(NAME)) { \
-        ImGuiApp::StartMainLoop(MAIN_LOOP, USER_DATA); \
+    if (ImApp::BeginApplication(NAME)) { \
+        ImApp::StartMainLoop(MAIN_LOOP, USER_DATA); \
     } \
-    ImGuiApp::EndApplication(); \
+    ImApp::EndApplication(); \
     return 0; \
 }
 

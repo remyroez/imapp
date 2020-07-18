@@ -59,14 +59,14 @@ void CleanupImGui()
 
 void MainLoop(void* arg)
 {
-    ImGuiApp::BeginFrame();
+    ImApp::BeginFrame();
     if (main_loop) main_loop(arg);
-    ImGuiApp::EndFrame();
+    ImApp::EndFrame();
 }
 
 }
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool BeginApplication(const char* name)

@@ -76,7 +76,7 @@ using namespace gl;
 #endif
 #endif
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 IMAPP_API bool InitOpenGLLoader();

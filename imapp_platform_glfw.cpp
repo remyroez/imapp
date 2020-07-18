@@ -32,7 +32,7 @@
 namespace
 {
 
-GLFWwindow* window = nullptr;
+GLFWwindow* window = NULL;
 
 void glfw_error_callback(int error, const char* description)
 {
@@ -41,7 +41,7 @@ void glfw_error_callback(int error, const char* description)
 
 }
 
-namespace ImGuiApp
+namespace ImApp
 {
 
 bool SetupPlatform(const char* name)
@@ -103,7 +103,7 @@ bool SetupPlatform(const char* name)
 void ShutdownPlatform()
 {
     glfwDestroyWindow(window);
-    window = nullptr;
+    window = NULL;
     
     glfwTerminate();
 }

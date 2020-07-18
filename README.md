@@ -12,14 +12,14 @@ Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/i
 
 int main(int argc, char *argv[])
 {
-    if (ImGuiApp::BeginApplication("Example"))
+    if (ImApp::BeginApplication("Example"))
     {
         int my_image_width = 0;
         int my_image_height = 0;
         ImTextureID my_image_texture;
-        bool success = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+        bool success = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 
-        while (ImGuiApp::BeginFrame())
+        while (ImApp::BeginFrame())
         {
             if (success)
             {
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
                 ImGui::Image(my_image_texture, ImVec2(my_image_width, my_image_height));
                 ImGui::End();
             }
-            ImGuiApp::EndFrame();
+            ImApp::EndFrame();
         }
     }
-    ImGuiApp::EndApplication();
+    ImApp::EndApplication();
 
     return 0;
 }

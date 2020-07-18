@@ -29,9 +29,9 @@ IMAPP_MAIN("imapp minimal example")
         once = true;
 
         // Load Texture
-        // - We will here use ImGuiApp::LoadTextureFromFile to load images from disk.
+        // - We will here use ImApp::LoadTextureFromFile to load images from disk.
 #ifndef IMGUI_DISABLE_FILE_FUNCTIONS
-        loaded_texture = ImGuiApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
+        loaded_texture = ImApp::LoadTextureFromFile("MyImage01.jpg", &my_image_texture, &my_image_width, &my_image_height);
 #endif
     }
 
@@ -53,7 +53,7 @@ IMAPP_MAIN("imapp minimal example")
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
         if (ImGui::ColorEdit3("clear color", (float*)&clear_color)) // Edit 3 floats representing a color
         {
-            ImGuiApp::SetClearColor(clear_color);
+            ImApp::SetClearColor(clear_color);
         }
 
         if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)

@@ -4,7 +4,7 @@
 #pragma once
 #include "imgui_internal.h"
 
-namespace ImGuiApp
+namespace ImApp
 {
     // for Platform
     IMAPP_API bool SetupPlatform(const char* name);
