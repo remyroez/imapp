@@ -25,7 +25,7 @@
 #include <vulkan/vulkan.h>
 
 // https://github.com/martty/imgui/commit/f1f948bea715754ad5e83d4dd9f928aecb4ed1d3
-//#define IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
+#define IMAPP_IMPL_VULKAN_USER_TEXTURE_PATCH
 
 // Initialization data, for ImGui_ImplVulkan_Init()
 // [Please zero-clear before use!]
