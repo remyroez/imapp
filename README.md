@@ -1,6 +1,6 @@
 # imapp
 
-Standalone application starter kit for [Dear ImGui](https://github.com/ocornut/imgui)
+Standalone application framework for [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Features
 
@@ -84,7 +84,7 @@ IMAPP_MAIN("Minimal Example") // Setup/Process events/Rendering/Shutdown
 
 ## Building
 
-Note: Consult `examples/` directory for CMake build example.
+Note: Consult [imapp-template](https://github.com/remyroez/imapp-template) for build example using CMake.
 
 ### Add required files
 
@@ -142,7 +142,6 @@ Note: Consult `examples/` directory for CMake build example.
 
 ## TODO
 
-- Split examples directory into separate repo
 - Setup build/test on GitHub Actions
 - Test on Windows/macOS
 - Support iOS/Android
@@ -151,8 +150,7 @@ Note: Consult `examples/` directory for CMake build example.
 ## Links
 
 - [Dear ImGui](https://github.com/ocornut/imgui)
-- [SDL2 CMake modules](https://github.com/aminosbh/sdl2-cmake-modules)
-- [stb](https://github.com/nothings/stb)
+- [stb](https://github.com/nothings/stb) (Texture loading API using stb_image.h)
 - [martty/imgui](https://github.com/martty/imgui) (User texture binding for Vulkan Renderer)
 
 ## License
