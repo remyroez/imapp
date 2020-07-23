@@ -51,6 +51,9 @@ namespace ImApp
     // Clear color
     IMAPP_API void SetClearColor(const ImVec4& col);
 
+    // Styles
+    IMAPP_API void StyleViewport();
+
     // Texture loading
     IMAPP_API bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int* out_width, int* out_height);
     IMAPP_API bool LoadTextureFromMemory(const unsigned char* data, int size, ImTextureID* out_texture_id, int* out_width, int* out_height);
