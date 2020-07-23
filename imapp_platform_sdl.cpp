@@ -193,8 +193,15 @@ bool ProcessEventPlatform()
                 processed = true;
                 RequestQuit();
             }
-            else if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(window))
+            else if (event.type == SDL_WINDOWEVENT)
             {
+#ifndef IMGUI_HAS_VIEWPORT
+                if (event.window.windowID != SDL_GetWindowID(window))
+                {
+                    // not main window
+                }
+                else
+#endif
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE)
                 {
                     processed = true;
