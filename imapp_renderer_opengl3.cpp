@@ -35,6 +35,10 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     glClear(GL_COLOR_BUFFER_BIT);
     
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+#ifdef IMGUI_HAS_VIEWPORT
+    UpdateViewportPlatform();
+#endif
 }
 
 void CleanupRenderer()

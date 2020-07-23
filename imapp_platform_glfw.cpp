@@ -44,7 +44,7 @@ void glfw_error_callback(int error, const char* description)
 namespace ImApp
 {
 
-bool SetupPlatform(const char* name)
+bool SetupPlatform(const char* name, const ImVec2& size)
 {
     bool succeeded = false;
 
@@ -75,7 +75,13 @@ bool SetupPlatform(const char* name)
 #endif
 
         // Create window with graphics context
-        window = glfwCreateWindow(1280, 720, name, NULL, NULL);
+        window = glfwCreateWindow(
+            size.x > 0 ? (int)size.x : 1280,
+            size.y > 0 ? (int)size.y : 720,
+            name,
+            NULL,
+            NULL
+        );
 
         if (window == NULL)
         {
@@ -134,6 +140,29 @@ void EndFramePlatform()
 {
 #ifdef IMAPP_RENDERER_OPENGL
     glfwSwapBuffers(window);
+#endif
+}
+
+void UpdateViewportPlatform()
+{
+#ifdef IMGUI_HAS_VIEWPORT
+    // Update and Render additional Platform Windows
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+#ifdef IMAPP_RENDERER_OPENGL
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+#endif
+
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+
+#ifdef IMAPP_RENDERER_OPENGL
+        glfwMakeContextCurrent(backup_current_context);
+#endif
+    }
 #endif
 }
 

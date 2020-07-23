@@ -45,6 +45,10 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     //glUseProgram(0);
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
     //glUseProgram(last_program);
+
+#ifdef IMGUI_HAS_VIEWPORT
+    UpdateViewportPlatform();
+#endif
 }
 
 void CleanupRenderer()

@@ -488,6 +488,14 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     if (!is_minimized)
     {
         FrameRender(wd, draw_data);
+    }
+
+#ifdef IMGUI_HAS_VIEWPORT
+    UpdateViewportPlatform();
+#endif
+
+    if (!is_minimized)
+    {
         FramePresent(wd);
     }
 }

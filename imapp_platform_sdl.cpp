@@ -39,7 +39,7 @@ FramebufferSizeCallback framebuffersize_callback = NULL;
 namespace ImApp
 {
 
-bool SetupPlatform(const char* name)
+bool SetupPlatform(const char* name, const ImVec2& size)
 {
     bool succeeded = false;
 
@@ -88,7 +88,14 @@ bool SetupPlatform(const char* name)
         SDL_DisplayMode current;
         SDL_GetCurrentDisplayMode(0, &current);
 
-        window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+        window = SDL_CreateWindow(
+            name,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            size.x > 0 ? (int)size.x : 1280,
+            size.y > 0 ? (int)size.y : 720,
+            window_flags
+        );
 
 #ifdef IMAPP_RENDERER_OPENGL
         gl_context = SDL_GL_CreateContext(window);
@@ -144,6 +151,28 @@ void EndFramePlatform()
 #endif
 }
 
+void UpdateViewportPlatform()
+{
+#ifdef IMGUI_HAS_VIEWPORT
+    // Update and Render additional Platform Windows
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+#if defined(IMAPP_RENDERER_OPENGL)
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+#endif
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+#if defined(IMAPP_RENDERER_OPENGL)
+        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+#endif
+    }
+#endif
+}
+
 bool ProcessEventPlatform()
 {
     bool processed = false;
@@ -164,8 +193,15 @@ bool ProcessEventPlatform()
                 processed = true;
                 RequestQuit();
             }
-            else if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(window))
+            else if (event.type == SDL_WINDOWEVENT)
             {
+#ifndef IMGUI_HAS_VIEWPORT
+                if (event.window.windowID != SDL_GetWindowID(window))
+                {
+                    // not main window
+                }
+                else
+#endif
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE)
                 {
                     processed = true;

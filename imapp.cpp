@@ -35,16 +35,18 @@ bool done = false;
 
 void (*main_loop)(void*) = NULL;
 
-bool SetupImGui()
+bool SetupImGui(ImGuiConfigFlags flags)
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     root_context = ImGui::CreateContext();
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= flags;
+
 #ifdef IMAPP_SYSTEM_EMSCRIPTEN
     // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
     // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
-    ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = NULL;
 #endif
 
@@ -69,11 +71,11 @@ void MainLoop(void* arg)
 namespace ImApp
 {
 
-bool BeginApplication(const char* name)
+bool BeginApplication(const char* name, const ImVec2& size, ImGuiConfigFlags flags)
 {
     bool succeeded = false;
 
-    if (!SetupPlatform(name))
+    if (!SetupPlatform(name, size))
     {
         fprintf(stderr, "Failed to Setup Platform Bindings!\n");
     }
@@ -81,7 +83,7 @@ bool BeginApplication(const char* name)
     {
         fprintf(stderr, "Failed to Setup Renderer Bindings!\n");
     }
-    else if (!SetupImGui())
+    else if (!SetupImGui(flags))
     {
         fprintf(stderr, "Failed to Setup Dear ImGui!\n");
     }
@@ -166,6 +168,19 @@ bool IsRequestedQuit()
 void SetClearColor(const ImVec4& col)
 {
     clear_color = col;
+}
+
+void StyleViewport()
+{
+#ifdef IMGUI_HAS_VIEWPORT
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+#endif
 }
 
 bool LoadTextureFromFile(const char* filename, ImTextureID* out_texture_id, int* out_width, int* out_height)
