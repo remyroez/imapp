@@ -147,21 +147,29 @@ void BeginFramePlatform()
 void EndFramePlatform()
 {
 #if defined(IMAPP_RENDERER_OPENGL)
+    SDL_GL_SwapWindow(window);
+#endif
+}
+
+void UpdateViewportPlatform()
+{
 #ifdef IMGUI_HAS_VIEWPORT
     // Update and Render additional Platform Windows
-    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-    //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
+#if defined(IMAPP_RENDERER_OPENGL)
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
         SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
         SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+#endif
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
+#if defined(IMAPP_RENDERER_OPENGL)
         SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-    }
 #endif
-    SDL_GL_SwapWindow(window);
+    }
 #endif
 }
 

@@ -491,12 +491,7 @@ void EndFrameRenderer(const ImVec4 &clear_col)
     }
 
 #ifdef IMGUI_HAS_VIEWPORT
-    // Update and Render additional Platform Windows
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-    }
+    UpdateViewportPlatform();
 #endif
 
     if (!is_minimized)

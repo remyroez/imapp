@@ -139,19 +139,30 @@ void BeginFramePlatform()
 void EndFramePlatform()
 {
 #ifdef IMAPP_RENDERER_OPENGL
+    glfwSwapBuffers(window);
+#endif
+}
+
+void UpdateViewportPlatform()
+{
 #ifdef IMGUI_HAS_VIEWPORT
     // Update and Render additional Platform Windows
-    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-    //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+    ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
+#ifdef IMAPP_RENDERER_OPENGL
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
         GLFWwindow* backup_current_context = glfwGetCurrentContext();
+#endif
+
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
+
+#ifdef IMAPP_RENDERER_OPENGL
         glfwMakeContextCurrent(backup_current_context);
-    }
 #endif
-    glfwSwapBuffers(window);
+    }
 #endif
 }
 

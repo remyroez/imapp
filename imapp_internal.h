@@ -16,6 +16,8 @@ namespace ImApp
     IMAPP_API void BeginFramePlatform();
     IMAPP_API void EndFramePlatform();
 
+    IMAPP_API void UpdateViewportPlatform();
+
     IMAPP_API bool ProcessEventPlatform();
 
     IMAPP_API void GetFramebufferSize(int &width, int &height);
