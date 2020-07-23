@@ -39,7 +39,7 @@ FramebufferSizeCallback framebuffersize_callback = NULL;
 namespace ImApp
 {
 
-bool SetupPlatform(const char* name)
+bool SetupPlatform(const char* name, const ImVec2& size)
 {
     bool succeeded = false;
 
@@ -88,7 +88,14 @@ bool SetupPlatform(const char* name)
         SDL_DisplayMode current;
         SDL_GetCurrentDisplayMode(0, &current);
 
-        window = SDL_CreateWindow(name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+        window = SDL_CreateWindow(
+            name,
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            size.x > 0 ? (int)size.x : 1280,
+            size.y > 0 ? (int)size.y : 720,
+            window_flags
+        );
 
 #ifdef IMAPP_RENDERER_OPENGL
         gl_context = SDL_GL_CreateContext(window);

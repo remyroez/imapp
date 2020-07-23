@@ -30,7 +30,7 @@ namespace ImApp
     // Application (Main Window)
     // - Setup/Shutdown Platform/Renderer/Dear ImGui Context.
     // - Default window size is 1280x720.
-    IMAPP_API bool BeginApplication(const char* name);
+    IMAPP_API bool BeginApplication(const char* name, const ImVec2& size = ImVec2(0, 0), ImGuiConfigFlags flags = 0);
     IMAPP_API void EndApplication();
 
     // Frame

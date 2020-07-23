@@ -7,7 +7,7 @@
 namespace ImApp
 {
     // for Platform
-    IMAPP_API bool SetupPlatform(const char* name);
+    IMAPP_API bool SetupPlatform(const char* name, const ImVec2& size);
     IMAPP_API void ShutdownPlatform();
 
     IMAPP_API bool InitPlatform();

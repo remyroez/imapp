@@ -44,7 +44,7 @@ void glfw_error_callback(int error, const char* description)
 namespace ImApp
 {
 
-bool SetupPlatform(const char* name)
+bool SetupPlatform(const char* name, const ImVec2& size)
 {
     bool succeeded = false;
 
@@ -75,7 +75,13 @@ bool SetupPlatform(const char* name)
 #endif
 
         // Create window with graphics context
-        window = glfwCreateWindow(1280, 720, name, NULL, NULL);
+        window = glfwCreateWindow(
+            size.x > 0 ? (int)size.x : 1280,
+            size.y > 0 ? (int)size.y : 720,
+            name,
+            NULL,
+            NULL
+        );
 
         if (window == NULL)
         {
