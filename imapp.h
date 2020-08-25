@@ -25,6 +25,11 @@
 #define IMAPP_SYSTEM_EMSCRIPTEN
 #endif
 
+// SDL_main
+#if defined(IMAPP_PLATFORM_SDL2)
+#include <SDL.h>
+#endif
+
 namespace ImApp
 {
     // Application (Main Window)
